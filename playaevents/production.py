@@ -1,0 +1,2 @@
+
+from playaevents.settings import *
