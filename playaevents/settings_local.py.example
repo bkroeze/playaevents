@@ -1,0 +1,15 @@
+DATABASE_HOST = 'localhost'
+DATABASE_USER = 'playaevents'
+DATABASE_NAME = 'playaevents'
+DATABASE_PASSWORD = 'secret'
+
+from playaevents.utilities import logs
+import os
+
+LOGFILE = os.path.normpath(os.path.join(os.path.dirname(__file__), '..', 'logs', 'playaevents.log'))
+
+_loglevels = {'root' : logs.DEBUG, 'keyedcache' : logs.INFO}
+log = logs.getLogger('settings', level=_loglevels,
+    format="%(asctime)s [%(process)d] %(levelname)s %(name)s: %(message)s",
+    outfile=LOGFILE, rotation_count=10, rotation_max=4, streaming=True)
+log.info("PlayaEvents Started")
