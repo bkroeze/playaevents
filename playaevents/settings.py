@@ -49,6 +49,8 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.admin',
+    'playaevents',
+    'swingtime',
 )
 
 TEMPLATE_LOADERS = (
