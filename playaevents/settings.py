@@ -1,7 +1,7 @@
 import os
 
 ADMINS = (
-    # ('Your Name', 'your_email@domain.com'),
+    ('Bruce Kroeze', 'bruce@ecomsmith.com'),
 )
 
 MANAGERS = ADMINS
@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'playaevents',
     'swingtime',
+    'south',
 )
 
 TEMPLATE_LOADERS = (
@@ -61,5 +62,12 @@ TEMPLATE_LOADERS = (
 TEMPLATE_DIRS = (
     os.path.join(os.path.dirname(__file__), "templates"),
 )
+
+CACHE_PREFIX = 'F'
+#CACHE_TIMEOUT = 0
+CACHE_TIMEOUT = 60*60
+CACHE_BACKEND = "memcached://127.0.0.1:11211/"
+
+DEBUG_TOOLBAR_CONFIG = { 'INTERCEPT_REDIRECTS': False }
 
 from settings_local import *
