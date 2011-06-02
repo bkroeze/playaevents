@@ -1,0 +1,20 @@
+{% extends "playaevents/base.html" %}
+{% block head_title %} {{ year.year }} - Art Installations{% endblock %}
+{% block body %}
+{% comment %}
+{% ifnotequal previous 2005 %}
+<a href='/brc/{{ previous }}/art_installations/'><< {{ previous }}</a>
+{% endifnotequal %}
+<font size=+3><b><a href='/brc/{{ year.year }}'>{{ year.year }}</a></b></font>
+{% ifnotequal next 2010 %}
+<a href='/brc/{{ next }}/art_installations/'> {{ next }}>></a>
+{% endifnotequal %}
+{% endcomment %}
+<h2>{{ year.year }} Art Installations</h2>
+<ul>
+{% for art_installation in art_installations %}
+<li><a href='/brc/{{ year.year }}/art_installation/{{art_installation.id }}/'>{{ art_installation.name }}</a></li>
+{% endfor %}
+</ul>
+{% endblock %}
+

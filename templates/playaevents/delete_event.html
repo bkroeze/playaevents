@@ -1,0 +1,16 @@
+{% extends "playaevents/base.html" %}
+{% load i18n %}
+{% block head_title %}{% blocktrans %}Delete Event?{% endblocktrans %}{% endblock %}
+{% block body %}
+{% if msg %}
+<h3>{{ msg }}</h3>
+{% else %}
+<h3>{% trans "You are about to delete your entire playa event. Are you sure that you want to do this?" %}</h3>
+{% endif %}
+<h2>{{ object.title }}</h2>
+<form action="." method="POST">
+	<input type="submit" value="{% trans "Delete" %}" />
+	<input type="button" value="{% trans "Cancel" %}" onclick="window.location='{{next}}'"/>
+	<input type="hidden" name="next" value="{{next|default:""}}"/>
+</form>
+{% endblock %}

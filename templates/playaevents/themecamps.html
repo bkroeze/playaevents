@@ -1,0 +1,24 @@
+{% extends "playaevents/base.html" %}
+{% block head_title %} {{ year.year }} - Theme Camps{% endblock %}
+{% block body %}
+{% comment %}
+{% ifnotequal previous 2005 %}
+<a href='/{{ previous }}/themecamps/'><< {{ previous }}</a>
+{% endifnotequal %}
+<font size=+3><b><a href='/{{ year.year }}'>{{ year.year }}</a></b></font>
+{% ifnotequal next 2010 %}
+<a href='/{{ next }}/themecamps/'> {{ next }}>></a>
+{% endifnotequal %}
+{% endcomment %}
+<h2>{{ year.year }} Theme Camps</h2>
+<ul>
+
+{% for theme_camp in theme_camps %}
+<li><a href='/{{ year.year }}/themecamp/{{theme_camp.id }}/'>{{ theme_camp.name }}</a></li>
+{% endfor %}
+
+</ul>
+{% endblock %}
+
+
+

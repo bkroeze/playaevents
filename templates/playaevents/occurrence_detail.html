@@ -1,0 +1,66 @@
+{% extends "playaevents/base.html" %}
+{% block title %}Event Occurrence{% endblock %}
+{% block extra_head %}
+ <script src="{{ STATIC_URL }}js/occurrence_form.js" type="text/javascript"></script>
+{% endblock %}
+{% block body %}
+	{% if occurrence %}
+     <h3>Edit Playa Event Occurrence</h3>
+	{% else %}
+     <h3>Add Playa Event Occurrence</h3>
+	{% endif %}
+     <h4>
+         <a href="{% url playa_event_view event.year.year event.id %}">{{ event.title }}</a>
+	{% if occurrence %}
+         &ndash;
+         {% if occurrence.event.playaevent.all_day %}
+          {{ occurrence.start_time|date:"l, F jS" }} - All Day
+         {% else %}
+         {% with occurrence.start_time as st  %}
+            {{ st|date:"l, F jS P" }}
+         {% endwith %}
+         {% endif %}
+	{% endif %}
+        </h4>
+
+     <dl>
+         <dt>Event type:</dt>
+         <dd>{{ event.event_type }}</dd>
+
+         <dt>Description:</dt>
+         <dd>{{ event.description|default:"None" }}</dd>
+     </dl>
+
+{% if form.non_field_errors %}<ul class="errorList">{{ form.non_field_errors.as_ul }}</ul>{% endif %}
+
+
+     <form action="" method="post">
+	{% if occurrence %}
+         {% if occurrence.event.playaevent.all_day %}
+	<input type='hidden' id='all_day' name='all_day' value='true'>
+	{% endif %}
+	{% endif %}
+     <table>
+         <tfoot>
+             <tr>
+		{% if occurrence %}
+                 <td colspan="2"><input type="submit" value="Update" />
+		{% else %}
+                 <td colspan="2"><input type="submit" value="Add" />
+		{% endif %}
+		<input type="button" value="Cancel" onclick="window.location='{{next}}'"/>
+		</td>
+             </tr>
+         </tfoot>
+         <tbody>
+         {% for field in form %}
+        {% if field.errors %}
+                <tr><td colspan=2>{{ field.errors }}</td></tr>
+        {% endif %}
+        <tr id='{{ field.label|slugify }}-row'><td>{{ field.label_tag }}:</td><td> {{ field }}</td></tr>
+    {% endfor %}
+
+	</tbody>
+     </table>
+     </form>
+{% endblock %}

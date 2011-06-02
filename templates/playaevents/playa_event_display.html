@@ -1,0 +1,132 @@
+{% load comments_tag %}
+{% load i18n %}
+<br/>
+
+{% if user.is_authenticated %}
+{% ifequal user playa_event.creator %}
+<div class="event_actions">
+  {% if back_url %}
+  <a href="{{ back_url }}">
+    <img border="0" src="{{ STATIC_URL }}img/left_mod.png" alt="{% trans "Back" %}"/>
+  </a>
+  &nbsp;
+  {% endif %}
+  <b>Edit or delete your event:</b> <a href="{% url playa_event_edit playa_event.year.year playa_event.id %}">
+    <img border="0" src="{{ STATIC_URL }}img/pencil.png" alt="{% trans "Change" %}"/>
+  </a>&nbsp;<a href="{% url playa_event_delete playa_event.year.year playa_event.id %}">
+    <img border="0" src="{{ STATIC_URL }}img/delete.png" alt="{% trans "Delete" %}"/>
+  </a>
+</div>
+{% endifequal %}
+{% endif %}
+
+<div class="event-table">
+<div class="event-name"><h2>{{playa_event.title}}</h2></div>
+<table cellpadding="8" cellspacing="10" width="510">
+
+ {% if playa_event.occurrence_set.count %}
+     <tr>
+       <td valign="top" width="170"><b>Date/Time(s):</b>
+	</td>
+       <td  width="330">
+     	{% for o in playa_event.occurrence_set.all %}
+		{% if playa_event.all_day %}
+			{{ o.start_time|date:"l, F jS" }} - All Day
+		{% else %}
+	             {{ o.start_time|date:"l, F jS, Y P" }} &ndash;
+        	     {{ o.end_time|date:"P" }}
+		{% endif %}
+	<br/>
+     	{% endfor %}
+       </td>
+     </tr>
+ {% else %}
+ {% endif %}
+{% ifequal user playa_event.creator %}
+<tr>
+  <td><b>Status:</b></td>
+  {% ifequal playa_event.moderation 'A' %}
+  <td class='mod-accepted'>Accepted</span></td>
+  {% endifequal %}
+  {% ifequal playa_event.moderation 'U' %}
+  <td class='mod-unmoderated'>Not yet moderated</span></td>
+  {% endifequal %}
+  {% ifequal playa_event.moderation 'R' %}
+  <td class='mod-rejected'>Rejected</span></td>
+  {% endifequal %}
+</tr>
+{% endifequal %}
+{% ifnotequal playa_event.event_type.abbr "none" %}
+<tr>
+<td><b>Type:</b></td>
+<td>{{ playa_event.event_type.label }}</td>
+</tr>
+{% endifnotequal %}
+<tr>
+{% if playa_event.hosted_by_camp %}
+<td><b>Hosted by Camp:</b></td>
+<td><a href='/{{ playa_event.year.year }}/themecamp/{{playa_event.hosted_by_camp.id }}/'>{{ playa_event.hosted_by_camp.name }}</a></td>
+</tr>
+{% endif %}
+{% if playa_event.located_at_art %}
+<tr>
+<td><b>Located at Art:</b></td>
+<td><a href='/{{ playa_event.year.year }}/art_installation/{{playa_event.located_at_art.id }}/'>{{ playa_event.located_at_art.name }}</a></td>
+</tr>
+{% endif %}
+{% if playa_event.other_location %}
+<tr>
+<td><b>Location:</b></td>
+<td>{{ playa_event.other_location }}</td>
+</tr>
+{% endif %}
+<tr>
+{% if playa_event.url %}
+<td><b>URL:</b></td>
+<td><a href='{{ playa_event.url }}' target="_blank">{{ playa_event.url }}</td>
+</tr>
+{% endif %}
+{% if playa_event.list_contact_online %}
+{% if playa_event.contact_email %}
+<tr>
+<td><b>Contact Email:</b></td>
+<td><a href='mailto:{{ playa_event.contact_email }}'>{{ playa_event.contact_email }}</td>
+{% endif %}
+{% endif %}
+</tr>
+</table>
+{% if playa_event.description %}
+<h3>Description</h3>
+<p class="event-d">{{playa_event.description}}</p>
+{% endif %}
+
+<h3>Photos</h3>
+<!-- Start of Flickr Badge -->
+
+<table id="flickr_badge_uber_wrapper" cellpadding="0" cellspacing="10" border="0"><table cellpadding="0" cellspacing="10" border="0" id="flickr_badge_wrapper">
+<tr>
+<script type="text/javascript" src="http://www.flickr.com/badge_code_v2.gne?show_name=1&count=6&display=latest&size=s&layout=h&source=all_tag&tag=burningman%3Aevent%3D{{ playa_event.id }}&user=15662856%40N00"></script>
+<td id="flickr_badge_source" valign="center" align="center">
+<table cellpadding="0" cellspacing="0" border="0"><tr>
+</tr></table>
+</td></tr></table>
+<tr>
+<td id="flickr_badge_source_txt">To add photos, tag your photo with <b>burningman:event={{ playa_event.id }}</b> on <a href="http://www.flickr.com/photos/tags/burningman:event={{ playa_event.id }}/">on Flickr</a><br/> <a href="http://code.flickr.com/blog/2009/07/06/extraextraextra/">what are machine tags?</a></td>
+</td></tr></table>
+<!-- End of Flickr Badge -->
+
+<br/><br/><br/>
+<iframe src="http://www.facebook.com/plugins/like.php?href=http://earth.burningman.com{% url playa_event_view year.year playa_event.id %}&amp;layout=standard&amp;show_faces=true&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:80px;" allowTransparency="true"></iframe>
+
+<script type="text/javascript">
+tweetmeme_style = 'compact';
+</script>
+<script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
+
+</div>
+
+{% comment %}
+<h3>Comments on This Event:</h3>
+{% comments playa_event %}
+{% endcomment %}
+

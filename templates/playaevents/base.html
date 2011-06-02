@@ -1,0 +1,15 @@
+{% extends "site_base.html" %}
+
+{% load i18n %}
+{% block logo_link_image %}<a href="/"><img src="/media/img/bman-earth-brc.gif" alt="PlayaEvents"/></a>{% endblock %}
+{% block rtab_id %}id="brc_tab"{% endblock %}
+
+{% block subnav %}
+{% if year %}
+        <ul>
+            <li><a href="{% url themecamps year.year %} ">{% trans "Theme Camps" %}</a></li>
+            <li><a href="{% url art_installations year.year %}">{% trans "Art Installations" %}</a></li>
+            <li><a href="{% url playa_events year.year %}">{% trans "Playa Events" %}</a></li>
+        </ul>
+{% endif %}
+{% endblock %}

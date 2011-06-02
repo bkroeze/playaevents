@@ -1,0 +1,23 @@
+table.listings {
+	margin: 20px 0 0 0;
+    width:95%;
+}
+
+table.listings input, table.listings img {
+	margin: 25px 0 0 0;
+}
+
+table.listings td h2 {
+		margin: 20px 0 0 20px;
+
+}
+
+table.listings td p {
+		margin: 10px 0 0 20px;
+
+}
+
+table.listings td.meta p {
+		margin: 10px 0 0 0;
+
+}

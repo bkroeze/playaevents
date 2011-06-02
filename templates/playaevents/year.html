@@ -1,0 +1,29 @@
+{% extends "playaevents/base.html" %}
+{% load i18n %}
+
+{% block head_title %}{{ year.year }} {% endblock %}
+{% block body %}
+
+<font size=+3><b>Black Rock City {{ year.year }}</b></font>
+
+<ul>
+<li><b>Location:</b> {{ year.location }}</li>
+<li><b>Theme:</b> {{ year.theme }}</li>
+</ul>
+<h2><a href='/{{ year.year }}/themecamps/'>Theme Camps</a>&nbsp;-&nbsp;
+<a href='/{{ year.year }}/art_installations/'>Art Installations</a>&nbsp;-&nbsp;
+<a href='/{{ year.year }}/playa_events/'>Playa Events</a>
+</h2>
+
+{% if streets %}
+<h2>Streets</h2>
+
+<ul>
+{% for street in streets %}
+<li>{{ street.name }}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+{% endblock %}
+

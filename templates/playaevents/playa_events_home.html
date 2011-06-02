@@ -1,0 +1,46 @@
+{% extends "playaevents/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Welcome" %}{% endblock %}
+
+{% block tab_id %}id="home_tab"{% endblock %}
+
+{% block body %}
+<h2>Welcome to the {{ year.year }} Playa Events Calendar</h2>
+
+{% if not user.is_authenticated %}
+<p>To submit an event, please <a href="{% url acct_login %}">login</a> or <a href="{% url acct_signup %}">sign up</a> for an account.</p>
+{% comment %}removed by Bruce Kroeze for 2011 prep
+{% else %}
+<p>
+    {% ifequal year.year '2010' %}
+    <div id="create-new" style="margin: 0">
+        <a href='/{{year.year}}/playa_event/create'>Create New Event</a>
+    </div>
+    {% endifequal %}
+</p>
+{% endcomment %}
+{% endif %}
+
+{% comment %}removed by Bruce Kroeze for 2011 prep
+{% if my_events %}
+<p>
+<a href="/{{year.year}}/playa_events/my_events">View/edit the events you have created.</a>
+</p>
+
+{% endif %}
+{% endcomment %}
+
+<p>You do not need to have an account if you want to <a href="{% url playa_events_by_day year.year 1 %}">browse events</a> that are being planned by Black Rock City citizens for {{ year.year }}.</p>
+<h3>Moderation Information</h3>
+<p>All events will be moderated before posting them online. It may take 24-48 hours for your event to be moderated, so please don't panic if you don't see it in the calendar immediately.</p>
+<h3>Inclusion in the What Where When</h3>
+<p>
+	The event submission form will be available through the event, but only those submitted before July 1st (or the first 960 received, whichever comes first) will also be included in the What Where When, the printed playa events guide that's handed out at the Greeters' Station.
+</p>
+<p>See you on playa!</p>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends "playaevents/base.html" %}
+{% block head_title %}API Documentation{% endblock %}
+
+{% block subnav %}
+
+{% endblock %}
+
+{% block body %}
+<h1>API Documentation</h1>
+
+<div style="float:right;">
+<strong>Example of the 2009 Burning Man map with Larry Harvey's head.</strong>
+<br/>
+<iframe src="http://jsbin.com/abuci3/" style="width: 500px; height: 500px;">Your browser is lame.</iframe>
+<br/>
+<a href="http://jsbin.com/abuci3/edit/">Click here for the source.</a> You can embed this map for free on your website.
+</div>
+
+<h2>API Overview</h2>
+The Burning Man API is free for you to use and build with. Most of the examples here are for 2009, but as we get data for 2010 it will be published to these APIs. Right now, you can access the Theme Camp names, Art names, and Events for 2010.
+<br/><br/>
+The API currently supports two formats, XML and JSON. By default it
+will return JSON. If you wish to consume XML, pass the API the keypair
+format=xml. If you want JSONP, provide the keypair callback=myclbk.
+
+<h2>Methods</h2>
+The API supports the following methods to receive Burning Man data.<br/><br/>
+
+<h3>Theme Camps</h3>
+<ul>
+<li>
+  <pre>http://earth.burningman.com/api/0.1/2009/camp/</pre>
+  <a href="http://jsbin.com/ihijo">jQuery Theme Camps example</a> [<a href="http://jsbin.com/ihijo/edit">source</a>]
+</li>
+<li>
+  Camp with id 1663
+  <pre>http://earth.burningman.com/api/0.1/2009/camp/1663/</pre>
+  <a href="http://jsbin.com/amegu3">jQuery Theme Camp example</a> [<a href="http://jsbin.com/amegu3/edit">source</a>]
+</ul>
+
+<h3>Art Installations</h3>
+<ul>
+<li>
+  <pre>http://earth.burningman.com/api/0.1/2009/art/</pre>
+  <a href="http://jsbin.com/opiyo4">jQuery Art example</a> [<a href="http://jsbin.com/opiyo4/edit">source</a>]
+</li>
+
+<li>
+  Art with ID 540
+  <pre>http://earth.burningman.com/api/0.1/2009/art/540/</pre>
+</li>
+</ul>
+
+<h3>Events</h3>
+
+<ul>
+<li>
+  All Events
+  <pre>http://earth.burningman.com/api/0.1/2010/event/</pre>
+  <a href="http://jsbin.com/ilulu4">jQuery Events example</a> [<a href="http://jsbin.com/ilulu4/edit">source</a>]
+</li>
+
+<li>
+  Event with ID 1676
+  <pre>http://earth.burningman.com/api/0.1/2009/event/1676/</pre>
+</li>
+
+<li>
+  Events starting after Sept 1st
+  <pre>http://earth.burningman.com/api/0.1/2009/event/?start_time=2009-09-01%2018:00</pre>
+</li>
+
+<li>
+  Events before Sept 1st
+  <pre>http://earth.burningman.com/api/0.1/2009/event/?end_time=2009-09-01%2018:00</pre>
+</li>
+
+<li>
+  Events between Sept 1st and Sept 2nd
+  <pre>http://earth.burningman.com/api/0.1/2009/event/?end_time=2009-09-02%2018:00&start_time=2009-09-01%2018:00</pre>
+</li>
+
+<li>
+  You don't have to specify the time if you don't want to as well
+  <pre>http://earth.burningman.com/api/0.1/2009/event/?end_time=2009-09-01&start_time=2009-09-02</pre>
+</li>
+</ul>
+
+
+<h3>Streets and Infrastructure:</h3>
+
+<ul>
+<li>
+  Annular streets for 2009
+  <pre>http://earth.burningman.com/api/0.1/2009/cstreet/</pre>
+</li>
+
+<li>
+  Time streets for 2009
+  <pre>http://earth.burningman.com/api/0.1/2009/tstreet/</pre>
+</li>
+
+<li>
+  Infrastructure for 2009
+  <pre>http://earth.burningman.com/api/0.1/2009/infrastructure/</pre>
+</li>
+</ul>
+
+<h3>Geocoder</h3>
+<ul>
+<li>
+  The geocoder maps playa addresses to Lat/Lon. A reverse geocoder (lat/lon->nearest playa address is in the works)
+  <pre>http://earth.burningman.com/geocoder/2009/9:00/kinship/</pre>
+  <pre>http://earth.burningman.com/geocoder/2009/2:00/esplanade/</pre>
+  <pre>http://earth.burningman.com/geocoder/2009/4:20/dna/</pre>
+</li>
+</ul>
+
+
+<h3>Tiles</h3>
+<ul>
+<li>
+  "Standard Web" Tiles (or Google Scheme or Spherical Mercator) are available at
+  <p>
+    <code>
+      http://earthdev.burningman.com/osm_tiles2/$zoom/$col/$row.png
+    </code>
+  </p>
+  Example usage in OpenLayers is <a href="http://earth.burningman.com/2009/map/">here</a>. Also there is a <a href="http://jsbin.com/amazu/2/edit">jsBin example map</a>.
+</li>
+</ul>
+
+<a name="GPS"></a>
+<h3>GPS files</h3>
+<a href="http://207.7.135.230/apache2-default/gps/2009_art.gpx">2009_art.gpx</a><br/>
+<a href="http://207.7.135.230/apache2-default/gps/2009_infrastructure.gpx">2009_infrastructure.gpx</a><br/>
+<a href="http://207.7.135.230/apache2-default/gps/2009_camps.gpx">2009_camps.gpx</a><br/>
+<a href="http://207.7.135.230/apache2-default/gps/2009_garmin_brc.img">2009 Garmin IMG</a><br/>
+
+<h3>API Examples</h3>
+<a href="http://jsbin.com/avati">Flickr machine tag scoreboard</a> [<a href="http://jsbin.com/avati/edit">source</a>]
+<br/>
+<a href="http://jsbin.com/ogeku">Machine Tag Lookup Tool</a> [<a href="http://jsbin.com/ogeku/edit">source</a>]
+
+<h3>Legal</h3>
+© 2009 Black Rock City LLC, all rights reserved. Use of all event information and data restricted to free use<br/>
+These materials are not to be used or distributed in any form which may be sold for profit.
+
+{% endblock %}

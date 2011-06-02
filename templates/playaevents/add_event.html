@@ -1,0 +1,52 @@
+{% extends "playaevents/base.html" %}
+{% load i18n %}
+{% block head_title %}{% blocktrans %}Create or Edit Your Playa Event{% endblocktrans %}{% endblock %}
+{% block extra_head %}
+ <script src="{{ STATIC_URL }}js/event_form.js?version=1" type="text/javascript"></script>
+{% endblock %}
+{% block body %}
+
+{% ifnotequal year.year '2010' %}
+
+Adding or editing events is closed for {{ year.year }}.   Did you want to add an event for
+<a href="/2010/playa_event/create">2010</a>?
+<a href="">
+
+{% else %}
+
+{% if form.instance.id %}
+	<h2>{% trans "Edit Your Playa Event" %}</h2>
+{% else %}
+	<h2>{% trans "Create Your Playa Event" %}</h2>
+{% endif %}
+{% if form.non_field_errors %}<ul class="errorList">{{ form.non_field_errors.as_ul }}</ul>{% endif %}
+<form action="" method="post">
+{% if form.instance.id %}
+	<input id='existing' type='hidden' name='existing' value='true'>
+{% endif %}
+
+<table>
+ {% for field in form %}
+	{% if field.errors %}
+		<tr><td colspan=2>{{ field.errors }}</td></tr>
+	{% endif %}
+	<tr id='{{ field.label|slugify }}-row'><td>{{ field.label_tag }}:<br/><span class='event_form_help'>{{ field.help_text }}</span></td><td> {{ field }}
+	{% ifequal field.label "Print Description" %}
+		<br/><span id="print_description_countdown">150 Characters Available</span>
+	{% endifequal %}
+	{% ifequal field.label "Online Description" %}
+		<br/><span id="online_description_countdown">2000 Characters Available</span>
+	{% endifequal %}
+	</td></tr>
+    {% endfor %}
+</table>
+<br/>
+	<p><b>All events are moderated before being posted to the events calendar. Do not panic if you do not see your event immediately after submitting it. It may take 24 to 48 hours to be posted. </b></p>
+
+<input type="submit" value="{% trans "Save" %}">
+<input type="button" value="{% trans "Cancel" %}" onclick="window.location='{{next}}'"/>
+<input type="hidden" name="next" value="{{next|default:""}}"/>
+</form>
+{% endifnotequal %}
+{% endblock %}
+

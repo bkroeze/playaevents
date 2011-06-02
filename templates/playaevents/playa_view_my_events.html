@@ -1,0 +1,70 @@
+{% extends "playaevents/base.html" %}
+{% block head_title %} {{ year.year }} - Playa Events{% endblock %}
+{% block body %}
+
+<h2>My Events</h2>
+
+<p>
+    {% ifequal year.year '2010' %}
+    <div id="create-new" style="margin: 0">
+        <a href='/{{year.year}}/playa_event/create'>Create New Event</a>
+    </div>
+    {% endifequal %}
+</p>
+
+  {% if approved_events %}
+  <h4 class='day_sub_header'>Approved Events</h4>
+  <div class='timed_listing'>
+    <ul>
+      {% for e in approved_events %}
+        <li>
+          <a href="{% url playa_event_view year.year e.id %}">{{ e.title }}</a>
+            {{ e.description }}
+            <ul>
+            {% for o in e.occurrence_set.all %}
+                {% if e.all_day %}
+                    {{ o.start_time|date:"l, F jS" }} - All Day
+                {% else %}
+                         <li>{{ o.start_time|date:"l, F jS, Y P" }} &ndash;
+                         {{ o.end_time|date:"P" }}
+                {% endif %}
+            {% endfor %}
+            </ul>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endif %}
+
+  {% if unmoderated_events %}
+  <h4 class='day_sub_header'>Events in the Moderation Queue</h4>
+  <div class='timed_listing'>
+    <ul>
+      {% for e in unmoderated_events %}
+        <li>
+          <a href="{% url playa_event_view year.year e.id %}">{{ e.title }}</a>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endif %}
+
+  {% if rejected_events %}
+  <h4 class='day_sub_header'>Rejected Events</h4>
+  <div class='timed_listing'>
+    <ul>
+      {% for e in rejected_events %}
+        <li>
+          <a href="{% url playa_event_view year.year e.id %}">{{ e.title }}</a>
+        </li>
+      {% endfor %}
+    </ol>
+  </div>
+  {% endif %}
+
+  {% if not approved_events and not unmoderated_events and not rejected_events %}
+    <p>No events submitted for {{ request.user.username }}</p>
+  {% endif %}
+</div>
+{% endblock %}
+

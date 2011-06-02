@@ -1,0 +1,13 @@
+{% extends "playaevents/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% blocktrans %}Black Rock City{% endblocktrans %}{% endblock %}
+
+{% block body %}
+<ul>
+{% for year in years %}
+        <li><a href='/{{ year.year }}/'>{{ year.year }} </a> -  {{ year.location }} - {{ year.theme }}</li>
+{% endfor %}
+</ul>
+{% endblock %}

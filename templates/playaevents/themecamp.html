@@ -1,0 +1,85 @@
+{% extends "playaevents/base.html" %}
+{% load comments_tag %}
+{% load checkins_tags %}
+
+{% block head_title %} {{ year.year }} - {{ theme_camp.name }} {% endblock %}
+{% block extra_head_base %}
+{{ map.media }}
+{% include 'checkins/jqueryui_show_list.html' %}
+{% endblock %}
+{% block body %}
+<a href='/{{ theme_camp.year.year }}'>{{ theme_camp.year.year }}</a><br />
+<a href='/{{ theme_camp.year.year }}/themecamps/'>Back to {{ theme_camp.year.year }} Theme Camps</a><br />
+<div id="backToSearch"></div>
+<script type="text/javascript">
+if (document.referrer.search("/search/") != -1) {
+$("#backToSearch").html("<a href='javascript:history.back();'>Back to Search Results</a>"); }
+</script>
+
+<br/>
+
+<h1>{{ theme_camp.name }}</h1>
+{% comment %}{% if theme_camp.image %} <img src='/media/{{ theme_camp.image }}'><br />{% endif %}{% endcomment %}
+{% if theme_camp.url %} <b>URL: </b><a href='{{ theme_camp.url }}' target="_top">{{ theme_camp.url }}</a><br/>{% endif %}
+{% if theme_camp.contact_email %}<b>Contact Email: </b><a href='mailto:{{ theme_camp.contact_email }}'>{{ theme_camp.contact_email }}</a><br />{% endif %}
+{% if theme_camp.hometown %}<b>Hometown: </b>{{ theme_camp.hometown }}{% endif %}
+
+{% if theme_camp.description %}<p>{{ theme_camp.description }}</p>{% endif %}
+
+<h3>Location</h3>
+{% ifequal year.year "2010" %}
+Will be available when gate opens.
+{% else %}
+{% if theme_camp.location_string %} {{ theme_camp.location_string }}<br/>
+{% else %}
+No location specified.<br/>
+{% endif %}
+{{ map }}
+{% endifequal %}
+
+<h3>Photos</h3>
+<!-- Start of Flickr Badge -->
+
+<table id="flickr_badge_uber_wrapper" cellpadding="0" cellspacing="10" border="0"><table cellpadding="0" cellspacing="10" border="0" id="flickr_badge_wrapper">
+<tr>
+<script type="text/javascript" src="http://www.flickr.com/badge_code_v2.gne?show_name=1&count=10&display=latest&size=s&layout=h&source=all_tag&tag=burningman%3Acamp%3D{{ theme_camp.id }}&user=15662856%40N00"></script>
+<td id="flickr_badge_source" valign="center" align="center">
+<table cellpadding="0" cellspacing="0" border="0"><tr>
+</tr></table>
+</td></tr></table>
+<tr>
+<td id="flickr_badge_source_txt">To add photos, tag your photo with <b>burningman:camp={{ theme_camp.id }}</b> on <a href="http://www.flickr.com/photos/tags/burningman:camp={{ theme_camp.id }}/">on Flickr</a>. <a href="http://code.flickr.com/blog/2009/07/06/extraextraextra/">what are machine tags?</a></td>
+</td></tr></table>
+<!-- End of Flickr Badge -->
+<br/><br/><br/>
+<iframe src="http://www.facebook.com/plugins/like.php?href=http://earth.burningman.com/{{ year.year }}/themecamp/{{theme_camp.id}}&amp;layout=standard&amp;show_faces=true&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:80px;" allowTransparency="true"></iframe>
+<br/>
+<script type="text/javascript">
+tweetmeme_style = 'compact';
+</script>
+<script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
+
+
+{% if events %}
+<h3>Events At this Camp:</h3>
+{% for event in events %}
+<ul>
+<li><a href="{% url playa_event_view year.year event.id %}">{{ event.title }}</a></li>
+</ul>
+{% endfor %}
+{% endif %}
+
+<h3>Checkins</h3>
+<div id="themecamp-checkins">
+{% if request.user.is_authenticated and ALLOW_CHECKINS %}
+{% add_checkin_for_instance theme_camp request.user %}
+{% latest_checkins_for_instance theme_camp %}
+{% endif %}
+</div>
+
+{% comment %}
+<br/>
+<h3>Comments on This Camp:</h3>
+{% comments theme_camp %}
+{% endcomment %}
+{% endblock %}

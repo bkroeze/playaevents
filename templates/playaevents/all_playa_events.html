@@ -1,0 +1,51 @@
+{% extends "playaevents/base.html" %}
+{% block head_title %} {{ year.year }} - Playa Events{% endblock %}
+{% block body %}
+{% ifnotequal previous 2005 %}
+<a href='/{{ previous }}/playa_events/'><< {{ previous }}</a>
+{% endifnotequal %}
+<font size=+3><b><a href='/{{ year.year }}'>{{ year.year }}</a></b></font>
+{% ifnotequal next 2010 %}
+<a href='/{{ next }}/playa_events/'> {{ next }}>></a>
+{% endifnotequal %}
+<h2>Playa Events</h2>
+{% ifequal year.year '2010' %}
+<a href='/{{year.year}}/playa_event/create'>Create New Event</a><br/><br/>
+{% endifequal %}
+
+{% if by_day %}
+<table width=100% border='1'>
+  <thead border=1>
+    <tr>
+      <th>Day</th>
+      <th>Title</th>
+      <th>Start</th>
+      <th>End</th>
+    </tr>
+  </thead>
+  <tbody border=1>
+    {% for dt, occurrences in by_day %}
+    <tr>
+      <th rowspan="{{ occurrences|length }}">
+        {{ dt|date:"l - M jS"}}
+      </th>
+      {% for o in occurrences %}
+      <td><center><a href="{% url playa_event_view year.year o.event.playaevent.id %}">{{ o.title}}</a></center></td>
+	{% if o.event.playaevent.all_day %}
+		<td colspan=2><center>All Day</td>
+	{% else %}
+	      <td><center>{{ o.start_time|date:"P" }}</center></td>
+	      <td><center>{{ o.end_time|date:"P" }}</center></td>
+	{% endif %}
+    </tr>
+      {% if not forloop.last %}
+    <tr>
+      {% endif %}
+      {% endfor %}
+    {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <p>No events occurring in {{ year.year }}</p>
+  {% endif %}
+  {% endblock %}

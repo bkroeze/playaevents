@@ -1,0 +1,31 @@
+{% extends "playaevents/base.html" %}
+{% load comments_tag %}
+{% load i18n %}
+{% block head_title %} {{ year.year }} Event - {{ playa_event.title }} {% endblock %}
+{% block body %}
+<h4><a href='/{{ playa_event.year.year }}/playa_events/'>&larr;&nbsp;Back to {{ playa_event.year.year }} Playa Events</a></h4>
+<div id="backToSearch"></div>
+<script type="text/javascript">
+if (document.referrer.search("/search/") != -1) {
+$("#backToSearch").html("<a href='javascript:history.back();'>Back to Search Results</a>"); }
+</script>
+
+{% if not playa_event.list_online %}
+	{% ifnotequal user playa_event.creator %}
+		<h2>Event not available</h2>
+	{% else %}
+		{% include 'playaevents/playa_event_display.html' %}
+	{% endifnotequal %}
+{% else %}
+  {% ifnotequal playa_event.moderation 'A' %}
+	{% ifnotequal user playa_event.creator %}
+		  <h2>Event not available</h2>
+	{% else %}
+    		{% include 'playaevents/playa_event_display.html' %}
+	{% endifnotequal %}
+  {% else %}
+    {% include 'playaevents/playa_event_display.html' %}
+	{% endifnotequal %}
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "playaevents/base.html" %}
+{% load i18n %}
+{% block head_title %}{% blocktrans %}Delete Event Occurrence?{% endblocktrans %}{% endblock %}
+{% block body %}
+<h3>{% trans "You are about to delete one of your repeating occurrences for your playa event. Are you sure that you want to do this?" %}</h3>
+
+<h2>{{ object.title }}</h2>
+<h3>{{ object.start_time|date:"l, F jS, Y P" }} - {{ object.end_time|date:"l, F jS, Y P"  }}</h3>
+<form action="." method="POST">
+	<input type="submit" value="{% trans "Delete" %}" />
+	<input type="button" value="{% trans "Cancel" %}" onclick="window.location='{{next}}'"/>
+	<input type="hidden" name="next" value="{{next|default:""}}"/>
+</form>
+{% endblock %}
