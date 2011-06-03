@@ -37,7 +37,10 @@
             <span class="login">
               {% block login %}
                 {% if user.is_authenticated %}
-                  <b>{{ user }}</b> | {% if user.is_staff %}<a href="/admin/">{% trans "Admin" %}</a> | {% endif %}<a href="{% url auth_logout %}?next={{ request.path }}">{% trans "Logout" %}</a>
+                  <b>{{ user }}</b>
+                  {% if user.is_staff %}| <a href="/admin/">{% trans "Admin" %}</a> {% endif %}
+                  | <a href="{% url profiles_profile_my_detail %}">Account</a>
+                  | <a href="{% url auth_logout %}?next={{ request.path }}">{% trans "Logout" %}</a>
                 {% else %}
                   <a href="{% url auth_login %}">{% trans "Login" %}</a> {% trans "or" %} <a href="{% url registration_register %}"><b>{% trans "Sign up" %}</b></a>
                 {% endif %}
