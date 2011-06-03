@@ -44,7 +44,7 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'playaevents.urls'
 
 ACCOUNT_ACTIVATION_DAYS = 14
-AUTH_PROFILE_MODULE = 'signedauth.UserKey'
+AUTH_PROFILE_MODULE = 'bmprofile.BmProfile'
 LOGIN_REDIRECT_URL = '/'
 
 INSTALLED_APPS = (
@@ -60,6 +60,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'keyedcache',
     'registration',
+    'bmprofile',
     'signedauth',
 )
 

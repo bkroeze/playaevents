@@ -2,8 +2,12 @@
 {% block title %}Edit Profile{% endblock %}
 
 {% block content %}
-<h1>Contact info for {{ profile.user.username }} </h1>
+<h1>Contact info for {{ profile.name }} </h1>
 
-<p>TBD</p>
+<p>Playaname: {{ profile.playaname|default:profile.user.username }}</p>
+<p>API Key: {{ profile.userkey.key }}</p>
+<br/>
+<p><a href="{% url auth_password_change %}">Change password</a></p>
+<p><a href="{% url profiles_edit_profile %}">Edit my information</a></p>
 
 {% endblock content %}

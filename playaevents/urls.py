@@ -21,12 +21,16 @@ urlpatterns = patterns(
         'profiles.views.create_profile',
         name='profiles_create_profile'),
 
-    url(r'^accounts/profile/$',
+    url(r'^accounts/profile/edit/$',
         'profiles.views.edit_profile',
         name='profiles_edit_profile'),
 
-    url(r'^(?P<username>\w+)/$',
-        'profiles.views.profile_detail',
+    url(r'^accounts/profile/$',
+        'bmprofile.views.my_profile',
+        name='profiles_profile_my_detail'),
+
+    url(r'^accounts/profile/(?P<username>\w+)/$',
+        'bmprofile.views.my_profile',
         name='profiles_profile_detail'),
 
     url(r'^accounts/', include('registration.urls')),
