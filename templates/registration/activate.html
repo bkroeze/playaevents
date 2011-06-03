@@ -1,0 +1,22 @@
+{% extends "registration/base.html" %}
+{% load i18n %}
+{% comment %}
+**registration/activate.html**
+
+Used if account activation fails. With the default setup, has the following context:
+
+``account``
+    Whether or not the activation has been succesfull and perhaps also some
+    information about the actual account.
+{% endcomment %}
+
+{% block registration %}
+{% if account %}
+    <h1>{% trans "Activation successful" %}</h1>
+    {% url auth_login as login_url %}
+    <p>{% blocktrans %}You can now proceed to <a href="{{ login_url }}">login.</a>{% endblocktrans %}</p>
+{% else %}
+    <h1>{% trans "Activation failed" %}</h1>
+    <p>{% trans "Something went wrong while activating your account. This might mean that the activation code was wrong or that your account has already been activated." %}</p>
+{% endif %}
+{% endblock %}

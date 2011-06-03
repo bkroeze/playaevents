@@ -1,23 +1,21 @@
 {% extends "playaevents/base.html" %}
-{% load i18n %}
-{% block head_title %}{% blocktrans %}Create or Edit Your Playa Event{% endblocktrans %}{% endblock %}
+{% load i18n playaevents_tags %}
+{% block head_title %}{% blocktrans %}Create or Edit Your Playa Event for {{ year.year }}{% endblocktrans %}{% endblock %}
 {% block extra_head %}
  <script src="{{ STATIC_URL }}js/event_form.js?version=1" type="text/javascript"></script>
 {% endblock %}
 {% block body %}
 
-{% ifnotequal year.year '2010' %}
+{% if not year.year|is_current_year %}
 
 Adding or editing events is closed for {{ year.year }}.   Did you want to add an event for
-<a href="/2010/playa_event/create">2010</a>?
-<a href="">
-
+<a href="/{{ year.year|last_year }}/playa_event/create">{{ year.year|last_year }}</a>?
 {% else %}
 
 {% if form.instance.id %}
-	<h2>{% trans "Edit Your Playa Event" %}</h2>
+	<h2>{% blocktrans with year.year as curryear %}Edit Your Playa Event for {{ curryear }}{% endblocktrans %}</h2>
 {% else %}
-	<h2>{% trans "Create Your Playa Event" %}</h2>
+	<h2>{% blocktrans with year.year as curryear %}Create Your Playa Event for {{ curryear }}{% endblocktrans %}</h2>
 {% endif %}
 {% if form.non_field_errors %}<ul class="errorList">{{ form.non_field_errors.as_ul }}</ul>{% endif %}
 <form action="" method="post">
@@ -47,6 +45,6 @@ Adding or editing events is closed for {{ year.year }}.   Did you want to add an
 <input type="button" value="{% trans "Cancel" %}" onclick="window.location='{{next}}'"/>
 <input type="hidden" name="next" value="{{next|default:""}}"/>
 </form>
-{% endifnotequal %}
+{% endif %}
 {% endblock %}
 

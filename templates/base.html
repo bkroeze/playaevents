@@ -1,5 +1,4 @@
-{% load i18n %}
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+{% load i18n %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
@@ -25,18 +24,51 @@
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
 	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.timePicker.js"></script>
         {% block extra_head_base %}
-            {% block extra_head %}{% endblock %}
+          <link rel="stylesheet" href="{{ STATIC_URL }}css/site_tabs.css" />
+          <link rel="stylesheet" href="{{ STATIC_URL }}css/skylar.css" />
+          <link rel="stylesheet" href="{{ STATIC_URL }}css/listings.css" />
+          {% block extra_head %}{% endblock %}
         {% endblock %}
     </head>
 
     <body onload="{% block onload%}{% endblock %}">
         <div id="tabhead">
-            <div class="logo" dir="ltr">{% block logo_link_image %}{% endblock %}</div>
+            <div class="logo" dir="ltr"><a href="/"><img src="{{ STATIC_URL }}bman-earth-default.gif" alt="PlayaEvents"/></a></div>
             <span class="login">
-              {% block login %}{% endblock %}
+              {% block login %}
+                {% if user.is_authenticated %}
+                  <b>{{ user }}</b> | {% if user.is_staff %}<a href="/admin/">{% trans "Admin" %}</a> | {% endif %}<a href="{% url auth_logout %}?next={{ request.path }}">{% trans "Logout" %}</a>
+                {% else %}
+                  <a href="{% url auth_login %}">{% trans "Login" %}</a> {% trans "or" %} <a href="{% url registration_register %}"><b>{% trans "Sign up" %}</b></a>
+                {% endif %}
+              {% endblock %}
             </span>
-            <div class="tabs" {% block tab_id %}{% endblock %}>{% block tabs %}{% endblock %}</div>
-            <div class="right_tab" {% block rtab_id %}{% endblock %}>{% block right_tab %}{% endblock %}</div>
+            <div class="tabs" {% block tab_id %}{% endblock %}>
+              {% block tabs %}
+              <table>
+                <tr>
+                  <td class="tab tab_home"><div><a href="/">{% trans "Home" %}</a></div></td>
+                </tr>
+              </table>
+              {% endblock %}
+            </div>
+            <div class="right_tab" {% block rtab_id %}{% endblock %}>
+            {% block right_tab %}
+            {% comment %}
+            <table>
+              <tr>
+                <td class="tab rtab_brc"><div><a href="{% url year_info 2011 %}">2011</a></div></td>
+                {% if user.is_authenticated %}
+                <td class="tab rtab_profile"><div><a href="{% url profile_detail user %}">{% trans "People" %}</a></div></td>
+                {% else %}
+                <td class="tab rtab_profile"><div><a href="{% url profile_list %}">{% trans "People" %}</a></div></td>
+                {% endif %}
+                {# <td class="tab rtab_search"><div><a href="/search">{% trans "Search" %}</a></div></td> #}
+              </tr>
+            </table>
+            {% endcomment %}
+            {% endblock %}
+            </div>
         </div>
         <div id="subnav" class="clearfix">{% block subnav %}&nbsp;{% endblock %}</div>
 
@@ -49,15 +81,38 @@
                 </ul>
             {% endif %}
 
-            {% block body %}
-            {% endblock %}
+            {% block body %}{% block content %}{% endblock %}{% endblock %}
 
         </div>
 
-        <span id="footer">{% block footer %}{% endblock %}</span>
+        <span id="footer">
+          {% block footer %}
+          <div style="clear:both;"></div>
+          <div class="legal">
+            <a href="http://www.burningman.com/index/privacy_policy.html">privacy policy</a>&nbsp;::&nbsp;
+            <a href="http://www.burningman.com/whatisburningman/people/web_bio.html">credits</a><br />
+            dust in your eye? something not working?<br />
+            let us know: <a href="mailto:playacal-admin@burningman.com">playacal-admin@burningman.com</a><br /> &copy; 1989-2011 black rock city, llc
+          </div>
+          {% endblock %}
+        </span>
 
 	{% block extra_body_base %}
-            {% block extra_body %}{% endblock %}
+          {% comment %}
+          {% urchin %}
+          <script src="{{ STATIC_URL }}js/base.js" type="text/javascript"></script>
+          {% block extra_body %}{% endblock %}
+          <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+                var pageTracker = _gat._getTracker("UA-10418553-23");
+                pageTracker._trackPageview();
+          } catch(err) {}</script>
+          {% endcomment %}
+          {% block extra_body %}{% endblock %}
         {% endblock %}
     </body>
 </html>

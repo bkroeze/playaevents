@@ -27,10 +27,12 @@ STATIC_ROOT = os.path.join(DIRNAME, 'static')
 MEDIA_URL = '/media/'
 STATIC_URL = '/static/'
 
-ADMIN_MEDIA_PREFIX = '/admin_media/'
+ADMIN_MEDIA_PREFIX = '/static/admin/'
 
 # Don't share this with anybody.
 SECRET_KEY = 'h7ny60*1c8(%4h(0c8@470sg$&1$m5jae*z(+m9ck3*!f%i91o'
+
+SITE_ID = 1
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
@@ -41,11 +43,15 @@ MIDDLEWARE_CLASSES = (
 
 ROOT_URLCONF = 'playaevents.urls'
 
+ACCOUNT_ACTIVATION_DAYS = 14
+AUTH_PROFILE_MODULE = 'signedauth.UserKey'
+LOGIN_REDIRECT_URL = '/'
 
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
+    'django.contrib.sites',
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'playaevents',
@@ -53,6 +59,8 @@ INSTALLED_APPS = (
     'south',
     'django_extensions',
     'keyedcache',
+    'registration',
+    'signedauth',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (

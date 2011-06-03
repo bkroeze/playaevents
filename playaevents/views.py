@@ -473,7 +473,7 @@ def create_or_edit_event(request,
         form=playaforms.PlayaEventForm(data=request.POST, instance=instance)
         if form.is_valid():
             event = form.save(year_year, user, playa_event_id)
-            next = "/playaevents/" + event.year.year + "/playa_event/" + str(event.id)
+            next = '/' + event.year.year + "/playa_event/" + str(event.id)
 
             if playa_event_id is not None:
                 request.user.message_set.create(message="Your Event Updated successfully.")

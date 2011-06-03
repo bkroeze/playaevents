@@ -1,4 +1,4 @@
-{% extends "site_base.html" %}
+{% extends "base.html" %}
 
 {% load i18n %}
 
@@ -10,7 +10,7 @@
     {% if user.is_authenticated %}
         <p><span class="warning">{% trans "Note" %}</span>: {% blocktrans %}you are already logged in as {{ user }}.{% endblocktrans %}</p>
     {% endif %}
-    
+
     <form class="login" method="POST" action="">
         <table>
             {{ form.as_table }}
@@ -18,7 +18,7 @@
             <tr><td></td><td><input type="submit" value="{% trans "Log in &raquo;" %}" /></td></tr>
         </table>
     </form>
-    
+
     <p>{% blocktrans %}If you have any trouble logging in to your account, contact us at <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.{% endblocktrans %}</p>
 {% endblock %}
 

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<h1>Create contact info for {{ user }} </h1>
+
+<form method="POST" action="">
+    {{ form }}
+    <input type="submit" name="submit" value="Create" id="submit">
+</form>
+
+{% endblock content %}
