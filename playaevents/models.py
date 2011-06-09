@@ -98,11 +98,6 @@ class ThemeCamp(models.Model):
             'year_year':self.year.year,
         })
 
-    def save(self):
-        if self.location_poly:
-            self.location_point = self.location_poly.centroid
-        super(ThemeCamp, self).save()
-
 
 class ArtInstallation(models.Model):
     year = models.ForeignKey(Year)
