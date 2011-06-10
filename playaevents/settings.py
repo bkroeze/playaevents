@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.staticfiles',
     'playaevents',
+    'playaevents.api',
     'swingtime',
     'south',
     'django_extensions',

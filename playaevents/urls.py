@@ -17,6 +17,8 @@ urlpatterns = patterns(
 
     url(r'^admin/', include(admin.site.urls)),
 
+    url(r'^api/0.2/', include('playaevents.api.urls')),
+
     url(r'^accounts/profile/create/$',
         'profiles.views.create_profile',
         name='profiles_create_profile'),
