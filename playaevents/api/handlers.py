@@ -85,7 +85,7 @@ class BasePlayaEventHandler(object):
         if(year_year):
             year = Year.objects.get(year=year_year)
             if(playa_event_id):
-                events = PlayaEvent.objects.filter(year=year,id=playa_event_id)
+                events = PlayaEvent.objects.filter(year=year,id=playa_event_id, list_online=True)
             else:
                 if(request.GET.get('start_time') and request.GET.get('end_time')):
                     event_list = Occurrence.objects.filter(start_time__gte=request.GET.get('start_time'), end_time__lte=request.GET.get('end_time')).values_list('event', flat=True)
@@ -175,7 +175,7 @@ class PlayaEventHandler(BasePlayaEventHandler, BaseHandler):
             obj.year = year
 
         # text fields
-        for key in ('print_description', 'url', 'contact_email', 'other_location'):
+        for key in ('print_description', 'url', 'contact_email', 'other_location', 'slug'):
             if key in data:
                 val = data[key]
                 log.debug('setting %s=%s', key, val)
@@ -259,13 +259,13 @@ class BaseThemeCampHandler(object):
     fields = camp_fields
 
     def read(self, request, year_year=None, camp_id=None):
-        base = ThemeCamp.objects.filter()
+        base = ThemeCamp.objects.filter(list_online=True)
         if(year_year):
             year = Year.objects.get(year=year_year)
             if(camp_id):
-                camp = ThemeCamp.objects.filter(year=year,id=camp_id)
+                camp = ThemeCamp.objects.filter(year=year,id=camp_id,list_online=True)
             else:
-                camp = ThemeCamp.objects.filter(year=year)
+                camp = ThemeCamp.objects.filter(year=year,list_online=True)
             return camp
         else:
             return base.all()
@@ -282,7 +282,7 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
     allow_methods = ('GET', 'DELETE', 'PUT', 'POST')
     anonymous = AnonymousThemeCampHandler
 
-    def _create_or_update(self, request, year_year=None, playa_event_id=None):
+    def _create_or_update(self, request, year_year=None, camp_id=None):
         user = request.user
         method = request.method
 
@@ -302,13 +302,13 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
 
         log.debug('data for create_or_update: %s', data)
 
-        if playa_event_id:
+        if camp_id:
             try:
-                obj = ThemeCamp.objects.get(pk=playa_event_id)
-                log.debug('got playaevent #%i for update', obj.id)
+                obj = ThemeCamp.objects.get(pk=camp_id)
+                log.debug('got themecamp #%i for update', obj.id)
 
             except ThemeCamp.DoesNotExist:
-                return rc_response(request, rc.NOT_HERE, 'Event not found #%s' % playa_event_id)
+                return rc_response(request, rc.NOT_HERE, 'ThemeCamp not found #%s' % camp_id)
 
             # no updating the year!
             if 'year' in data:
@@ -318,18 +318,9 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
             log.debug('creating new event')
             obj = ThemeCamp()
             obj.creator = user
-            if not 'event_type' in data:
-                event_type = EventType.objects.get(pk=1)
-            else:
-                try:
-                    event_type = EventType.objects.get(abbr=data['event_type'])
-                except EventType.DoesNotExist:
-                    return rc_response(request, rc.NOT_HERE, 'No such EventType: %s' % data['event_type'])
-
-            obj.event_type = event_type
 
         # get rid of illegal-to-update attributes
-        for key in ('id','pk'):
+        for key in ('id','pk','bm_fm_id','deleted'):
             if key in data:
                 del data[key]
 
@@ -342,40 +333,31 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
 
             obj.year = year
 
+        if 'circular_street' in data:
+            key = data['circular_street']
+            try:
+                street = CircularStreet.objects.get(pk=key)
+                obj.circular_street = street
+            except CircularStreet.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such CircularStreet: %s' % key)
+
+        if 'time_street' in data:
+            key = data['time_street']
+            try:
+                street = TimeStreet.objects.get(pk=key)
+                obj.time_street = street
+            except TimeStreet.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such TimeStreet: %s' % key)
+
         # text fields
-        for key in ('print_description', 'url', 'contact_email', 'other_location'):
+        for key in ('name','description', 'url', 'hometown', 'location_string', 'slug'):
             if key in data:
                 val = data[key]
                 log.debug('setting %s=%s', key, val)
                 setattr(obj, key, val)
 
-        # moderation
-        if 'moderation' in data:
-            modkey = data['moderation'].upper()
-            if modkey in ('U','A','R'):
-                log.debug('setting moderation=%s', modkey)
-                obj.moderation = modkey
-
-        if 'hosted_by_camp' in data:
-            key = data['hosted_by_camp']
-            try:
-                camp = ThemeCamp.objects.get(pk=key)
-                log.debug('located at camp: %s', camp)
-                obj.hosted_by_camp = camp
-            except ThemeCamp.DoesNotExist:
-                return rc_response(request, rc.NOT_HERE, 'No such camp: %s' % key)
-
-        if 'located_at_art' in data:
-            key = data['located_at_art']
-            try:
-                art = ArtInstallation.objects.get(pk=key)
-                log.debug('located at art: %s', art)
-                obj.located_at_art = art
-            except ArtInstallation.DoesNotExist:
-                return rc_response(request, rc.NOT_HERE, 'No such art: %s' % key)
-
         # booleans
-        for key in ('check_location', 'all_day', 'list_online', 'list_contact_online'):
+        for key in ('list_online',):
             if key in data:
                 val = data[key].upper()
                 val = val in ('1', 'T', 'Y', 'YES', 'TRUE', 'ON')
@@ -393,33 +375,33 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
         response.content = json.dumps({'pk' : obj.id})
         return response
 
-    def read(self, request, year_year=None, playa_event_id=None):
+    def read(self, request, year_year=None, camp_id=None):
         log.debug('AnonymousThemeCampHandler GET')
-        return super(ThemeCampHandler, self).read(request, year_year=year_year, playa_event_id=playa_event_id)
+        return super(ThemeCampHandler, self).read(request, year_year=year_year, camp_id=camp_id)
 
-    def delete(self, request, year_year=None, playa_event_id=None):
-        log.debug('ThemeCampHandler DELETE: %s %s', year_year, playa_event_id)
-        if (playa_event_id):
+    def delete(self, request, year_year=None, camp_id=None):
+        log.debug('ThemeCampHandler DELETE: %s %s', year_year, camp_id)
+        if (camp_id):
             try:
-                obj = ThemeCamp.objects.get(pk=playa_event_id)
-                obj.moderation = 'R'
+                obj = ThemeCamp.objects.get(pk=camp_id)
+                obj.deleted = True
                 obj.save()
-                log.debug('Marking Event #%s rejected', playa_event_id)
-                return rc_response(request, rc.DELETED, 'Event rejected #%s' % playa_event_id)
+                log.debug('Marking Camp #%s deleted', camp_id)
+                return rc_response(request, rc.DELETED, 'Camp deleted #%s' % camp_id)
             except ThemeCamp.DoesNotExist:
-                return rc_response(request, rc.NOT_HERE, 'Event not found #%s' % playa_event_id)
+                return rc_response(request, rc.NOT_HERE, 'Camp not found #%s' % camp_id)
         else:
-            return rc_response(request, rc.NOT_HERE, 'Event ID required')
+            return rc_response(request, rc.NOT_HERE, 'Camp ID required')
 
-    def create(self, request, year_year=None, playa_event_id=None):
-        log.debug('ThemeCampHandler CREATE: %s %s', year_year, playa_event_id)
-        ret = self._create_or_update(request, year_year=year_year, playa_event_id=playa_event_id)
+    def create(self, request, year_year=None, camp_id=None):
+        log.debug('ThemeCampHandler CREATE: %s %s', year_year, camp_id)
+        ret = self._create_or_update(request, year_year=year_year, camp_id=camp_id)
         log.debug('create done')
         return ret
 
-    def update(self, request, year_year=None, playa_event_id=None):
-        log.debug('ThemeCampHandler UPDATE: %s %s', year_year, playa_event_id)
-        return self._create_or_update(request, year_year=year_year, playa_event_id=playa_event_id)
+    def update(self, request, year_year=None, camp_id=None):
+        log.debug('ThemeCampHandler UPDATE: %s %s', year_year, camp_id)
+        return self._create_or_update(request, year_year=year_year, camp_id=camp_id)
 
 
 class AnonymousCircularStreetHandler(AnonymousBaseHandler):
