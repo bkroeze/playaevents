@@ -80,6 +80,7 @@ class ThemeCamp(models.Model):
     time_address = models.TimeField(null=True, blank=True)
     participants = models.ManyToManyField(User, null=True, blank=True)
     bm_fm_id = models.IntegerField(null=True,blank=True)
+    deleted = models.NullBooleanField(null=True, blank=True, default=False)
 
     # make the default "objects" return just public results
     all_objects = models.Manager()

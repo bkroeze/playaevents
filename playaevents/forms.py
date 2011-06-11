@@ -139,8 +139,8 @@ class PlayaEventForm(forms.ModelForm):
     all_day=forms.BooleanField(required=False, label='All Day Event')
     repeats=forms.BooleanField(required=False, label='Repeats', help_text='If your event repeats at different times over several days or multiple times in a day you will need to create separate events for the different times.')
     repeat_days = MultipleIntegerField(playa_day_choices_short, label='Repeat Days',widget=forms.CheckboxSelectMultiple)
-    list_online=forms.BooleanField(required=False, label='List Event Online', initial=True)
-    list_contact_online=forms.BooleanField(required=False, label='List Contact Info Online', initial=True)
+    list_online=forms.BooleanField(required=False, label='List Event Online', initial=False)
+    list_contact_online=forms.BooleanField(required=False, label='List Contact Info Online', initial=False)
 
     def __init__(self, *args, **kwargs):
         super(PlayaEventForm, self).__init__(*args, **kwargs)

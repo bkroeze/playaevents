@@ -4,6 +4,9 @@ from piston.resource import Resource
 from playaevents.api import handlers
 from signedauth.authentication import IPUserAuthentication
 from playaevents.api.views import apidocs
+import logging
+
+log = logging.getLogger(__name__)
 
 auth = IPUserAuthentication()
 
@@ -39,3 +42,7 @@ if settings.DEBUG:
         url(r'^explore/$', 'signedauth.explore.views.explore', name="exploreform"),
         url(r'^ipecho\.(?P<emitter_format>[-\w]+)/$', echo, name="echohandler")
         )
+    log.debug('added explore form')
+else:
+    log.debug('production urls')
+

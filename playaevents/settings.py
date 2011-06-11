@@ -39,6 +39,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.middleware.doc.XViewMiddleware',
+    'playaevents.api.middleware.ContentTypeMiddleware',
 )
 
 ROOT_URLCONF = 'playaevents.urls'

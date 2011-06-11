@@ -54,7 +54,7 @@ class TimeAwareJSONEmitter(JSONEmitter):
             elif isinstance(thing, Model):
                 ret = _model(thing, fields=fields)
             elif isinstance(thing, HttpResponse):
-                raise HttpStatusCode(thing.content, code=thing.status_code)
+                raise HttpStatusCode(thing)
             elif isinstance(thing, types.FunctionType):
                 if not inspect.getargspec(thing)[0]:
                     ret = _any(thing())

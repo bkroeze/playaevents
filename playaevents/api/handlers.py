@@ -1,9 +1,17 @@
 from django.contrib.auth.models import User
 from piston.emitters import Emitter, JSONEmitter
 from piston.handler import BaseHandler, AnonymousBaseHandler
+from piston.utils import rc
+from playaevents.api.utils import rc_response
 from playaevents.api.emitters import TimeAwareJSONEmitter
 from playaevents.models import Year, CircularStreet, ThemeCamp, ArtInstallation, PlayaEvent, TimeStreet
-from swingtime.models import Occurrence
+from swingtime.models import Occurrence, EventType
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 import logging
 
 log = logging.getLogger(__name__)
@@ -11,16 +19,30 @@ log = logging.getLogger(__name__)
 JSONEmitter.unregister('json')
 Emitter.register('json', TimeAwareJSONEmitter, content_type='text/javascript; charset=utf-8')
 
-art_fields = ('id', 'name', ('year', ('id','year')), 'slug', 'artist', 'description', 'url', 'contact_email', 'location_point', 'location_poly', 'circular_street', 'time_address')
-event_fields = ('id', 'title','description', 'print_description', ('year', ('id','year')), 'slug', 'event_type', ('hosted_by_camp', ('id','name')), ('located_at_art', ('id','name')), 'other_location', 'check_location', 'url', 'location_point', 'location_track', 'all_day', ('occurrence_set', ('start_time', 'end_time')))
-camp_fields = ('id', ('year', ('id','year')), 'name', 'description', 'type', 'start_date_time', 'end_date_time', 'duration', 'repeats', 'hosted_by_camp', 'located_at_art', 'url', 'location_point', 'location_poly', 'contact_email')
-cstreet_fields = ('id', ('year', ('id','year')), 'name', 'order', 'width', 'distance_from_center', 'street_line')
-tstreet_fields = ('id', ('year', ('id','year')), 'hour', 'minute', 'name', 'width', 'street_line')
-year_fields = ('id', 'location', 'location_point', 'participants', 'theme')
+art_fields = ('id', 'name', ('year', ('id','year')),
+              'slug', 'artist', 'description', 'url',
+              'contact_email', 'circular_street', 'time_address')
+event_fields = ('id', 'title','description',
+                'print_description', ('year', ('id','year')),
+                'slug', 'event_type', ('hosted_by_camp', ('id','name')),
+                ('located_at_art', ('id','name')),
+                'other_location', 'check_location',
+                'url', 'all_day',
+                ('occurrence_set', ('start_time', 'end_time')))
+camp_fields = ('id', ('year', ('id','year')),
+               'name', 'description', 'type',
+               'start_date_time', 'end_date_time',
+               'duration', 'repeats', 'hosted_by_camp',
+               'located_at_art', 'url', 'contact_email')
+cstreet_fields = ('id', ('year', ('id','year')),
+                  'name', 'order', 'width',
+                  'distance_from_center')
+tstreet_fields = ('id', ('year', ('id','year')),
+                  'hour', 'minute', 'name', 'width')
+year_fields = ('id', 'location', 'participants', 'theme')
 user_fields = ('id', 'username', 'first_name', 'last_name', 'active')
 
-class AnonymousArtInstallationHandler(BaseHandler):
-    allow_methods = ('GET',)
+class BaseArtHandler(object):
     model = ArtInstallation
     fields = art_fields
 
@@ -36,15 +58,25 @@ class AnonymousArtInstallationHandler(BaseHandler):
         else:
             return base.all()
 
-
-class ArtInstallationHandler(BaseHandler):
+class AnonymousArtInstallationHandler(BaseArtHandler, AnonymousBaseHandler):
     allow_methods = ('GET',)
     model = ArtInstallation
-    fields = art_fields
+
+    def read(self, request, year_year=None, art_id=None):
+        log.debug('AnonymousArtInstallationHandler GET')
+        return super(AnonymousArtInstallationHandler, self).read(request, year_year=year_year, art_id=art_id)
+
+
+class ArtInstallationHandler(BaseArtHandler, BaseHandler):
+    allow_methods = ('GET',)
     anonymous = AnonymousArtInstallationHandler
 
-class AnonymousPlayaEventHandler(AnonymousBaseHandler):
-    allow_methods = ('GET',)
+    def read(self, request, year_year=None, art_id=None):
+        log.debug('ArtInstallationHandler GET')
+        return super(ArtInstallationHandler, self).read(request, year_year=year_year, art_id=art_id)
+
+
+class BasePlayaEventHandler(object):
     model = PlayaEvent
     fields = event_fields
 
@@ -65,19 +97,164 @@ class AnonymousPlayaEventHandler(AnonymousBaseHandler):
                     event_list = Occurrence.objects.filter(end_time__lte=request.GET.get('end_time')).values_list('event', flat=True)
                     events = PlayaEvent.objects.filter(id__in=event_list)
                 else:
-                        events = PlayaEvent.objects.filter(year=year)
+                        events = PlayaEvent.objects.filter(year=year, moderation='A', list_online=True)
             return events
         else:
             return base.all()
 
-class PlayaEventHandler(BaseHandler):
-    allow_methods = ('GET',)
-    model = PlayaEvent
-    anonymous = AnonymousPlayaEventHandler
-    fields = event_fields
 
-class AnonymousThemeCampHandler(AnonymousBaseHandler):
+class AnonymousPlayaEventHandler(BasePlayaEventHandler, AnonymousBaseHandler):
     allow_methods = ('GET',)
+
+    def read(self, request, year_year=None, playa_event_id=None):
+        log.debug('AnonymousPlayaEventHandler GET')
+        return super(AnonymousPlayaEventHandler, self).read(request, year_year=year_year, playa_event_id=playa_event_id)
+
+class PlayaEventHandler(BasePlayaEventHandler, BaseHandler):
+    allow_methods = ('GET', 'DELETE', 'PUT', 'POST')
+    anonymous = AnonymousPlayaEventHandler
+
+    def _create_or_update(self, request, year_year=None, playa_event_id=None):
+        user = request.user
+        method = request.method
+
+        if method == "PUT":
+            data = request.PUT.copy()
+        elif method == "POST":
+            data = request.POST.copy()
+        else:
+            return rc_response(request, rc.BAD_REQUEST, 'Bad request method: %s' % method)
+
+        if year_year and 'year' not in data:
+            data['year'] = year_year
+
+        if not (data and user):
+            log.debug('Bad request: data=%s, user=%s', data, user)
+            return rc_response(request, rc.BAD_REQUEST, 'Missing critical information')
+
+        log.debug('data for create_or_update: %s', data)
+
+        if playa_event_id:
+            try:
+                obj = PlayaEvent.objects.get(pk=playa_event_id)
+                log.debug('got playaevent #%i for update', obj.id)
+
+            except PlayaEvent.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Event not found #%s' % playa_event_id)
+
+            # no updating the year!
+            if 'year' in data:
+                del data['year']
+
+        else:
+            log.debug('creating new event')
+            obj = PlayaEvent()
+            obj.creator = user
+            if not 'event_type' in data:
+                event_type = EventType.objects.get(pk=1)
+            else:
+                try:
+                    event_type = EventType.objects.get(abbr=data['event_type'])
+                except EventType.DoesNotExist:
+                    return rc_response(request, rc.NOT_HERE, 'No such EventType: %s' % data['event_type'])
+
+            obj.event_type = event_type
+
+        # get rid of illegal-to-update attributes
+        for key in ('id','pk'):
+            if key in data:
+                del data[key]
+
+        # now loop through the data, updating as needed
+        if 'year' in data:
+            try:
+                year = Year.objects.get(year=data['year'])
+            except Year.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such year: %s' % data['year'])
+
+            obj.year = year
+
+        # text fields
+        for key in ('print_description', 'url', 'contact_email', 'other_location'):
+            if key in data:
+                val = data[key]
+                log.debug('setting %s=%s', key, val)
+                setattr(obj, key, val)
+
+        # moderation
+        if 'moderation' in data:
+            modkey = data['moderation'].upper()
+            if modkey in ('U','A','R'):
+                log.debug('setting moderation=%s', modkey)
+                obj.moderation = modkey
+
+        if 'hosted_by_camp' in data:
+            key = data['hosted_by_camp']
+            try:
+                camp = ThemeCamp.objects.get(pk=key)
+                log.debug('located at camp: %s', camp)
+                obj.hosted_by_camp = camp
+            except ThemeCamp.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such camp: %s' % key)
+
+        if 'located_at_art' in data:
+            key = data['located_at_art']
+            try:
+                art = ArtInstallation.objects.get(pk=key)
+                log.debug('located at art: %s', art)
+                obj.located_at_art = art
+            except ArtInstallation.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such art: %s' % key)
+
+        # booleans
+        for key in ('check_location', 'all_day', 'list_online', 'list_contact_online'):
+            if key in data:
+                val = data[key].upper()
+                val = val in ('1', 'T', 'Y', 'YES', 'TRUE', 'ON')
+                log.debug('setting %s=%s', key, val)
+                setattr(obj, key, val)
+
+        obj.save()
+
+        if method == 'PUT':
+            response = rc.ALL_OK
+
+        else:
+            response = rc.CREATED
+
+        response.content = json.dumps({'pk' : obj.id})
+        return response
+
+    def read(self, request, year_year=None, playa_event_id=None):
+        log.debug('PlayaEventHandler GET')
+        return super(PlayaEventHandler, self).read(request, year_year=year_year, playa_event_id=playa_event_id)
+
+    def delete(self, request, year_year=None, playa_event_id=None):
+        log.debug('PlayaEventHandler DELETE: %s %s', year_year, playa_event_id)
+        if (playa_event_id):
+            try:
+                obj = PlayaEvent.objects.get(pk=playa_event_id)
+                obj.moderation = 'R'
+                obj.save()
+                log.debug('Marking Event #%s rejected', playa_event_id)
+                return rc_response(request, rc.DELETED, 'Event rejected #%s' % playa_event_id)
+            except PlayaEvent.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Event not found #%s' % playa_event_id)
+        else:
+            return rc_response(request, rc.NOT_HERE, 'Event ID required')
+
+    def create(self, request, year_year=None, playa_event_id=None):
+        log.debug('PlayaEventHandler CREATE: %s %s', year_year, playa_event_id)
+        ret = self._create_or_update(request, year_year=year_year, playa_event_id=playa_event_id)
+        log.debug('create done')
+        return ret
+
+    def update(self, request, year_year=None, playa_event_id=None):
+        log.debug('PlayaEventHandler UPDATE: %s %s', year_year, playa_event_id)
+        return self._create_or_update(request, year_year=year_year, playa_event_id=playa_event_id)
+
+
+class BaseThemeCampHandler(object):
     model = ThemeCamp
     fields = camp_fields
 
@@ -93,12 +270,157 @@ class AnonymousThemeCampHandler(AnonymousBaseHandler):
         else:
             return base.all()
 
-
-class ThemeCampHandler(BaseHandler):
+class AnonymousThemeCampHandler(BaseThemeCampHandler, AnonymousBaseHandler):
     allow_methods = ('GET',)
-    model = ThemeCamp
-    fields = camp_fields
+
+    def read(self, request, year_year=None, playa_event_id=None):
+        log.debug('AnonymousThemeCampHandler GET')
+        return super(AnonymousThemeCampHandler, self).read(request, year_year=year_year, playa_event_id=playa_event_id)
+
+
+class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
+    allow_methods = ('GET', 'DELETE', 'PUT', 'POST')
     anonymous = AnonymousThemeCampHandler
+
+    def _create_or_update(self, request, year_year=None, playa_event_id=None):
+        user = request.user
+        method = request.method
+
+        if method == "PUT":
+            data = request.PUT.copy()
+        elif method == "POST":
+            data = request.POST.copy()
+        else:
+            return rc_response(request, rc.BAD_REQUEST, 'Bad request method: %s' % method)
+
+        if year_year and 'year' not in data:
+            data['year'] = year_year
+
+        if not (data and user):
+            log.debug('Bad request: data=%s, user=%s', data, user)
+            return rc_response(request, rc.BAD_REQUEST, 'Missing critical information')
+
+        log.debug('data for create_or_update: %s', data)
+
+        if playa_event_id:
+            try:
+                obj = ThemeCamp.objects.get(pk=playa_event_id)
+                log.debug('got playaevent #%i for update', obj.id)
+
+            except ThemeCamp.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Event not found #%s' % playa_event_id)
+
+            # no updating the year!
+            if 'year' in data:
+                del data['year']
+
+        else:
+            log.debug('creating new event')
+            obj = ThemeCamp()
+            obj.creator = user
+            if not 'event_type' in data:
+                event_type = EventType.objects.get(pk=1)
+            else:
+                try:
+                    event_type = EventType.objects.get(abbr=data['event_type'])
+                except EventType.DoesNotExist:
+                    return rc_response(request, rc.NOT_HERE, 'No such EventType: %s' % data['event_type'])
+
+            obj.event_type = event_type
+
+        # get rid of illegal-to-update attributes
+        for key in ('id','pk'):
+            if key in data:
+                del data[key]
+
+        # now loop through the data, updating as needed
+        if 'year' in data:
+            try:
+                year = Year.objects.get(year=data['year'])
+            except Year.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such year: %s' % data['year'])
+
+            obj.year = year
+
+        # text fields
+        for key in ('print_description', 'url', 'contact_email', 'other_location'):
+            if key in data:
+                val = data[key]
+                log.debug('setting %s=%s', key, val)
+                setattr(obj, key, val)
+
+        # moderation
+        if 'moderation' in data:
+            modkey = data['moderation'].upper()
+            if modkey in ('U','A','R'):
+                log.debug('setting moderation=%s', modkey)
+                obj.moderation = modkey
+
+        if 'hosted_by_camp' in data:
+            key = data['hosted_by_camp']
+            try:
+                camp = ThemeCamp.objects.get(pk=key)
+                log.debug('located at camp: %s', camp)
+                obj.hosted_by_camp = camp
+            except ThemeCamp.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such camp: %s' % key)
+
+        if 'located_at_art' in data:
+            key = data['located_at_art']
+            try:
+                art = ArtInstallation.objects.get(pk=key)
+                log.debug('located at art: %s', art)
+                obj.located_at_art = art
+            except ArtInstallation.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such art: %s' % key)
+
+        # booleans
+        for key in ('check_location', 'all_day', 'list_online', 'list_contact_online'):
+            if key in data:
+                val = data[key].upper()
+                val = val in ('1', 'T', 'Y', 'YES', 'TRUE', 'ON')
+                log.debug('setting %s=%s', key, val)
+                setattr(obj, key, val)
+
+        obj.save()
+
+        if method == 'PUT':
+            response = rc.ALL_OK
+
+        else:
+            response = rc.CREATED
+
+        response.content = json.dumps({'pk' : obj.id})
+        return response
+
+    def read(self, request, year_year=None, playa_event_id=None):
+        log.debug('AnonymousThemeCampHandler GET')
+        return super(ThemeCampHandler, self).read(request, year_year=year_year, playa_event_id=playa_event_id)
+
+    def delete(self, request, year_year=None, playa_event_id=None):
+        log.debug('ThemeCampHandler DELETE: %s %s', year_year, playa_event_id)
+        if (playa_event_id):
+            try:
+                obj = ThemeCamp.objects.get(pk=playa_event_id)
+                obj.moderation = 'R'
+                obj.save()
+                log.debug('Marking Event #%s rejected', playa_event_id)
+                return rc_response(request, rc.DELETED, 'Event rejected #%s' % playa_event_id)
+            except ThemeCamp.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Event not found #%s' % playa_event_id)
+        else:
+            return rc_response(request, rc.NOT_HERE, 'Event ID required')
+
+    def create(self, request, year_year=None, playa_event_id=None):
+        log.debug('ThemeCampHandler CREATE: %s %s', year_year, playa_event_id)
+        ret = self._create_or_update(request, year_year=year_year, playa_event_id=playa_event_id)
+        log.debug('create done')
+        return ret
+
+    def update(self, request, year_year=None, playa_event_id=None):
+        log.debug('ThemeCampHandler UPDATE: %s %s', year_year, playa_event_id)
+        return self._create_or_update(request, year_year=year_year, playa_event_id=playa_event_id)
+
 
 class AnonymousCircularStreetHandler(AnonymousBaseHandler):
     allow_methods = ('GET',)
