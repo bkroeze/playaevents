@@ -1,81 +1,50 @@
-{% load i18n %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+{% load i18n %}<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" dir="{% if LANGUAGE_BIDI %}rtl{% else %}ltr{% endif %}" xml:lang="{{ LANGUAGE_CODE }}" lang="{{ LANGUAGE_CODE }}">
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-        <title>PlayaEvents : {% block head_title %}{% endblock %}</title>
-        <!--[if IE]><style>
-            div {
-                zoom: 1; /* trigger hasLayout */
-            }
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <title>PlayaEvents : {% block head_title %}Playa Events{% endblock %}</title>
+    <!--[if IE]><style>
+        div {
+        zoom: 1; /* trigger hasLayout */
+        }
         </style><![endif]-->
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/base.css" />
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/tabs.css" />
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/uni-form.css" />
-        {% if LANGUAGE_BIDI %}
-        <style type="text/css" media="screen">
-            div.right_panel {
-                float: left; /* hotfix for sidebar */
-            }
-        </style>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/events.css" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.timePicker.js"></script>
+    {% block extra_head_base %}
+    {% block extra_head %}{% endblock %}
+    {% endblock %}
+  </head>
 
-        {% endif %}
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
-        <script src="{{ STATIC_URL }}js/uni-form.jquery.js" type="text/javascript"></script>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.13/jquery-ui.min.js"></script>
-	<script type="text/javascript" src="{{ STATIC_URL }}js/jquery.timePicker.js"></script>
-        {% block extra_head_base %}
-          <link rel="stylesheet" href="{{ STATIC_URL }}css/site_tabs.css" />
-          <link rel="stylesheet" href="{{ STATIC_URL }}css/skylar.css" />
-          <link rel="stylesheet" href="{{ STATIC_URL }}css/listings.css" />
-          {% block extra_head %}{% endblock %}
-        {% endblock %}
-    </head>
-
-    <body onload="{% block onload%}{% endblock %}">
-        <div id="tabhead">
-            <div class="logo" dir="ltr"><a href="/"><img src="{{ STATIC_URL }}bman-earth-default.gif" alt="PlayaEvents"/></a></div>
-            <span class="login">
-              {% block login %}
-                {% if user.is_authenticated %}
-                  <b>{{ user }}</b>
-                  {% if user.is_staff %}| <a href="/admin/">{% trans "Admin" %}</a> {% endif %}
-                  | <a href="{% url profiles_profile_my_detail %}">Account</a>
-                  | <a href="{% url auth_logout %}?next={{ request.path }}">{% trans "Logout" %}</a>
-                {% else %}
-                  <a href="{% url auth_login %}">{% trans "Login" %}</a> {% trans "or" %} <a href="{% url registration_register %}"><b>{% trans "Sign up" %}</b></a>
-                {% endif %}
-              {% endblock %}
-            </span>
-            <div class="tabs" {% block tab_id %}{% endblock %}>
-              {% block tabs %}
-              <table>
-                <tr>
-                  <td class="tab tab_home"><div><a href="/">{% trans "Home" %}</a></div></td>
-                </tr>
-              </table>
-              {% endblock %}
-            </div>
-            <div class="right_tab" {% block rtab_id %}{% endblock %}>
-            {% block right_tab %}
-            {% comment %}
-            <table>
-              <tr>
-                <td class="tab rtab_brc"><div><a href="{% url year_info 2011 %}">2011</a></div></td>
-                {% if user.is_authenticated %}
-                <td class="tab rtab_profile"><div><a href="{% url profile_detail user %}">{% trans "People" %}</a></div></td>
-                {% else %}
-                <td class="tab rtab_profile"><div><a href="{% url profile_list %}">{% trans "People" %}</a></div></td>
-                {% endif %}
-                {# <td class="tab rtab_search"><div><a href="/search">{% trans "Search" %}</a></div></td> #}
-              </tr>
-            </table>
-            {% endcomment %}
-            {% endblock %}
-            </div>
+  <body onload="{% block onload%}{% endblock %}" id="{% block bodyid %}events{% endblock %} class="{% block bodyclass %}default{% endblock %}>
+    <div id="wrap">
+      <div id="header">
+        <div id="page-header">
+          <div id="logo"><a href=""><img src="{{ STATIC_URL }}images/bman-logo.gif" /></a></div>
+          <div id="account-info">
+            {% if user.is_authenticated %}<a href="{% url profiles_profile_my_detail %}">{{ user }}</a>
+              {% if user.is_staff %}| <a href="/admin/">{% trans "Admin" %}</a> {% endif %}
+            {% else %}
+              <a href="{% url auth_login %}">Login</a>
+              &nbsp; | &nbsp;<a href="{% url registration_register %}">Signup</a>
+            {% endif %}
+          </div>
+          <div id="globalnav">
+            <span class="globalnavcat">About:&nbsp;&nbsp;<a href="http://www.burningman.com/whatisburningman/">What is Burning Man?</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/art_of_burningman/">Art of Burning Man</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/press/">Press Here</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/news/">News</a>&nbsp;::&nbsp;<a href="http://afterburn.burningman.com/">AfterBurn</a></span><br />
+            <span class="globalnavcat">Community:&nbsp;&nbsp;<a href="http://www.burningman.com/participate/">Participate</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/blackrockcity_yearround/">BRC Year Round</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/environment">Environment</a>&nbsp;::&nbsp;<a href="http://eplaya.burningman.com/">ePlaya</a>&nbsp;::&nbsp;<a href="http://regionals.burningman.com/">Regionals</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/galleries/">Galleries</a></span><br />
+            <span class="globalnavcat">The Event:&nbsp;&nbsp;<a href="http://www.burningman.com/first_timers/">First Timer's Guide</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/preparation/">Preparation</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/on_the_playa/">On The Playa</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/themecamps/">Theme Camps</a>&nbsp;::&nbsp;<a href="http://www.burningman.com/installations/">Art Installations</a></span><br />
+          </div>
         </div>
-        <div id="subnav" class="clearfix">{% block subnav %}&nbsp;{% endblock %}</div>
-
-        <div id="body">
+        <div id="pe-header"><a href="http://playaevents.burningman.com"><img src="{{ STATIC_URL }}images/pe-header.jpg" width="741" height="64" /></a></div>
+      </div>
+      <div id="main-content">
+        <div id="nav-bar">
+          <a href="/">Playa Events Home</a>&nbsp; | &nbsp;<a href="{% url playa_event_add_thisyear %}">Register Your Playa Event</a>&nbsp; | &nbsp;<a href="{% url playa_events_by_day_thisyear playa_day=1 %}">Browse Playa Events</a>
+        </div>
+	<!-- +++++ CONTENT WELL STARTS +++++ -->
+        <div id="content-well">
+          <!-- +++++ CONTENT AREA STARTS +++++ -->
+          <div id="content-area">
             {% if messages %}
                 <ul id="messages">
                     {% for message in messages %}
@@ -84,38 +53,38 @@
                 </ul>
             {% endif %}
 
-            {% block body %}{% block content %}{% endblock %}{% endblock %}
+            {% block body %}{% block content %}TBD{% endblock %}{% endblock %}
+            <div class="clear">&nbsp;</div>
+          </div><!-- +++++ CONTENT AREA ENDS +++++ -->
+        </div><!-- +++++ CONTENT WELL ENDS +++++ -->
+      </div>
+      <div id="footer">
+        <a href=
+           "http://www.burningman.com/index/privacy_policy.html">privacy
+        policy</a>&nbsp;::&nbsp; dust in your eye? something not
+        working?<br />
+        let us know: <a href=
+        "mailto:playacal-admin@burningman.com">playacal-admin@burningman.com</a><br />
 
-        </div>
-
-        <span id="footer">
-          {% block footer %}
-          <div style="clear:both;"></div>
-          <div class="legal">
-            <a href="http://www.burningman.com/index/privacy_policy.html">privacy policy</a>&nbsp;::&nbsp;
-            <a href="http://www.burningman.com/whatisburningman/people/web_bio.html">credits</a><br />
-            dust in your eye? something not working?<br />
-            let us know: <a href="mailto:playacal-admin@burningman.com">playacal-admin@burningman.com</a><br /> &copy; 1989-2011 black rock city, llc
-          </div>
-          {% endblock %}
-        </span>
-
-	{% block extra_body_base %}
-          {% comment %}
-          {% urchin %}
-          <script src="{{ STATIC_URL }}js/base.js" type="text/javascript"></script>
-          {% block extra_body %}{% endblock %}
-          <script type="text/javascript">
-            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
-            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
-          </script>
-          <script type="text/javascript">
-            try {
-                var pageTracker = _gat._getTracker("UA-10418553-23");
-                pageTracker._trackPageview();
-          } catch(err) {}</script>
-          {% endcomment %}
-          {% block extra_body %}{% endblock %}
-        {% endblock %}
-    </body>
+        © 1989-2011 black rock city, llc
+      </div>
+      </div>
+      {% block extra_body_base %}`
+      {% if not debug %}
+      <script type="text/javascript">
+        //<![CDATA[
+        var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+        document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+        //]]>
+        </script><script type="text/javascript">
+        //<![CDATA[
+        try {
+        var pageTracker = _gat._getTracker("UA-10418553-23");
+        pageTracker._trackPageview();
+        } catch(err) {}
+        //]]>
+      </script>
+      {% endif %}
+      {% endblock %}
+</body>
 </html>

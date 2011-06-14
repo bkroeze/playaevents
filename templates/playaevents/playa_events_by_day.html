@@ -1,69 +1,80 @@
 {% extends "playaevents/base.html" %}
 {% block head_title %} {{ year.year }} - Playa Events{% endblock %}
 {% block body %}
-{% comment %}
-  {% ifnotequal previous 2005 %}
-    <a href='/{{ previous }}/playa_events/'><< {{ previous }}</a>
-  {% endifnotequal %}
-  <font size=+3><b><a href='/{{ year.year }}'>{{ year.year }}</a></b></font>
-  {% ifnotequal next 2010 %}
-    <a href='/{{ next }}/playa_events/'> {{ next }}>></a>
-  {% endifnotequal %}
-{% endcomment %}
-
-<h2>Daily Event View</h2>
-
-<div id="date-nav">
-  <h4>
-        {% if prev_day %}
-        <div class="span-left"><a href="{% url playa_events_by_day year.year prev_day %}">&larr;&nbsp;{{ prev_day_dt|date:"l, N j, y" }}</a></div>
-        {% else %}
-        <div class="span-left"><span style="color:#D3D3D3">&larr;&nbsp;previous day</span></div>
-        {% endif %}
-
-        {% if next_day %}
-        <div class="span-right"><a href="{% url playa_events_by_day year.year next_day %}">{{ next_day_dt|date:"l, N j, y" }} &nbsp;&rarr;</a></div>
-        {% else %}
-        <div class="span-right"><span style="color:#D3D3D3">next day&nbsp;&rarr;</span></div>
-        {% endif %}
-    </h4>
-</div>
-<div id="daily_events">
-  <span class="day_top_sub_header">Events for  {{ day|date:"l, N j, Y"}}</span>
-    {% ifequal year.year '2010' %}
-    <div id="create-new">
-        <a href='/{{year.year}}/playa_event/create/{{playa_day}}'>Create New Event</a>
+<h1>
+  Browse Playa Events
+</h1>
+<div id="narrow-page-wrap">
+  <h2>
+    Daily Event View
+  </h2>
+  <div id="daily-box-wrap">
+    <div id="date-nav">
+      <div class="span-left">
+        <h4>
+          {% if prev_day %}
+          <a href="{% url playa_events_by_day year.year prev_day %}">
+            <img src="{{ STATIC_URL }}images/nav-prev-arrow.gif" alt="Previous Day" />
+            {{ prev_day_dt|date:"l, N j, y" }}
+          </a>
+          {% else %}
+            <span style="color:#D3D3D3">
+              <img src="{{ STATIC_URL }}images/nav-grey-prev-arrow.gif" width="15" height="13" />&nbsp;Previous Day
+            </span>
+          {% endif %}
+        </h4>
+      </div>
+      <div class="span-right">
+        <h4>
+          {% if next_day %}
+          <a href="{% url playa_events_by_day year.year next_day %}">
+            <img src="{{ STATIC_URL }}images/nav-next-arrow.gif" alt="Next Day" />
+            {{ next_day_dt|date:"l, N j, y" }}
+          </a>
+          {% else %}
+          <span style="color:#D3D3D3">
+            <img src="{{ STATIC_URL }}images/nav-grey-next-arrow.gif" width="15" height="13" />&nbsp;Next Day
+          </span>
+          {% endif %}
+        </h4>
+      </div>
     </div>
-    {% endifequal %}
-
-  {% if all_day_occ %}
-  <h4 class='day_sub_header'>All Day Events</h4>
-  <div class='all_day_listing'>
-    <ul>
-      {% for o in all_day_occ %}
-        <li><a href="{% url playa_event_view year.year o.event.playaevent.id %}">{{ o.title }}</a></li>
-      {% endfor %}
-    </ol>
+    <div id="daily_events">
+      <span class="day_top_sub_header">Events for {{ next_day_dt|date:"l, N j, y" }}</span>
+      {% if is_current_year %}
+      <div id="create-new">
+        <a href='{% url playa_event_add_day_thisyear playa_day=playa_day %}'>Add Your Event</a>
+      </div>
+      {% endif %}
+      {% if all_day_occ %}
+      <h4 class='day_sub_header'>
+        All Day Events
+      </h4>
+      <div class='all_day_listing'>
+        <ul>
+          {% for o in all_day_occ %}
+          <li><a href="{% url playa_event_view year.year o.event.playaevent.id %}">{{ o.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      {% if timed_occ %}
+      <h4 class='day_sub_header'>
+        Scheduled Events
+      </h4>
+      <div class='timed_listing'>
+        <ul>
+          {% for o in timed_occ %}
+          <li>
+            <a href="{% url playa_event_view year.year o.event.playaevent.id %}">{{ o.title }}</a>
+            <span class="event-times">
+              ({{ o.start_time|date:"P" }} - {{ o.end_time|date:"P" }})
+            </span>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+    </div>
   </div>
-  {% endif %}
-
-  {% if timed_occ %}
-  <h4 class='day_sub_header'>Scheduled Events</h4>
-  <div class='timed_listing'>
-    <ul>
-      {% for o in timed_occ %}
-        <li><a href="{% url playa_event_view year.year o.event.playaevent.id %}">{{ o.title }}</a>
-          <span class="event-times">
-          ({{ o.start_time|date:"P" }} - {{ o.end_time|date:"P" }})
-        </li>
-      {% endfor %}
-    </ol>
-  </div>
-  {% endif %}
-
-  {% if not all_day_occ and not timed_occ %}
-    <p>No events scheduled for {{ day|date:"l,  M jS"}}</p>
-  {% endif %}
-</div>
 {% endblock %}
-

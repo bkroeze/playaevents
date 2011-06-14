@@ -6,14 +6,14 @@
 <div class="event_actions">
   {% if back_url %}
   <a href="{{ back_url }}">
-    <img border="0" src="{{ STATIC_URL }}img/left_mod.png" alt="{% trans "Back" %}"/>
+    <img border="0" src="{{ STATIC_URL }}images/left_mod.png" alt="{% trans "Back" %}"/>
   </a>
   &nbsp;
   {% endif %}
   <b>Edit or delete your event:</b> <a href="{% url playa_event_edit playa_event.year.year playa_event.id %}">
-    <img border="0" src="{{ STATIC_URL }}img/pencil.png" alt="{% trans "Change" %}"/>
+    <img border="0" src="{{ STATIC_URL }}images/pencil.png" alt="{% trans "Change" %}"/>
   </a>&nbsp;<a href="{% url playa_event_delete playa_event.year.year playa_event.id %}">
-    <img border="0" src="{{ STATIC_URL }}img/delete.png" alt="{% trans "Delete" %}"/>
+    <img border="0" src="{{ STATIC_URL }}images/delete.png" alt="{% trans "Delete" %}"/>
   </a>
 </div>
 {% endifequal %}
@@ -64,13 +64,13 @@
 <tr>
 {% if playa_event.hosted_by_camp %}
 <td><b>Hosted by Camp:</b></td>
-<td><a href='/{{ playa_event.year.year }}/themecamp/{{playa_event.hosted_by_camp.id }}/'>{{ playa_event.hosted_by_camp.name }}</a></td>
+<td>{{ playa_event.hosted_by_camp.name }}</td>
 </tr>
 {% endif %}
 {% if playa_event.located_at_art %}
 <tr>
 <td><b>Located at Art:</b></td>
-<td><a href='/{{ playa_event.year.year }}/art_installation/{{playa_event.located_at_art.id }}/'>{{ playa_event.located_at_art.name }}</a></td>
+<td>{{ playa_event.located_at_art.name }}</td>
 </tr>
 {% endif %}
 {% if playa_event.other_location %}
@@ -99,35 +99,6 @@
 <p class="event-d">{{playa_event.description}}</p>
 {% endif %}
 
-{% comment %}
-<h3>Photos</h3>
-<!-- Start of Flickr Badge -->
-
-<table id="flickr_badge_uber_wrapper" cellpadding="0" cellspacing="10" border="0"><table cellpadding="0" cellspacing="10" border="0" id="flickr_badge_wrapper">
-<tr>
-<script type="text/javascript" src="http://www.flickr.com/badge_code_v2.gne?show_name=1&count=6&display=latest&size=s&layout=h&source=all_tag&tag=burningman%3Aevent%3D{{ playa_event.id }}&user=15662856%40N00"></script>
-<td id="flickr_badge_source" valign="center" align="center">
-<table cellpadding="0" cellspacing="0" border="0"><tr>
-</tr></table>
-</td></tr></table>
-<tr>
-<td id="flickr_badge_source_txt">To add photos, tag your photo with <b>burningman:event={{ playa_event.id }}</b> on <a href="http://www.flickr.com/photos/tags/burningman:event={{ playa_event.id }}/">on Flickr</a><br/> <a href="http://code.flickr.com/blog/2009/07/06/extraextraextra/">what are machine tags?</a></td>
-</td></tr></table>
-<!-- End of Flickr Badge -->
-{% endcomment %}
-
 <br/><br/><br/>
 <iframe src="http://www.facebook.com/plugins/like.php?href=http://earth.burningman.com{% url playa_event_view year.year playa_event.id %}&amp;layout=standard&amp;show_faces=true&amp;width=450&amp;action=like&amp;colorscheme=light&amp;height=80" scrolling="no" frameborder="0" style="border:none; overflow:hidden; width:450px; height:80px;" allowTransparency="true"></iframe>
-
-<script type="text/javascript">
-tweetmeme_style = 'compact';
-</script>
-<script type="text/javascript" src="http://tweetmeme.com/i/scripts/button.js"></script>
-
-</div>
-
-{% comment %}
-<h3>Comments on This Event:</h3>
-{% comments playa_event %}
-{% endcomment %}
 

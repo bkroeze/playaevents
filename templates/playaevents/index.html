@@ -5,9 +5,83 @@
 {% block head_title %}{% blocktrans %}Black Rock City{% endblocktrans %}{% endblock %}
 
 {% block body %}
-<ul>
-{% for year in years %}
-        <li><a href='/{{ year.year }}/'>{{ year.year }} </a> -  {{ year.location }} - {{ year.theme }}</li>
-{% endfor %}
-</ul>
+<h1>
+  Welcome to the {{ years.0.year }} Playa Events Registration
+</h1>
+<div id="homepage-left">
+  <div class="promo-item">
+    <div class="image-promo">
+        <a href='{% url playa_events_by_day year_year=years.0.year playa_day=1 %}'>
+        <img src="{{ STATIC_URL }}images/home-video-intro.jpg" width="198"
+             height="116" alt="Browse Events" title="Browse Events" class=
+             "align-left" />
+        </a>
+    </div>
+    <div class="text-promo">
+      <p>
+        <img src="{{ STATIC_URL }}images/header-browse.gif" width="207" height="41" alt="Browse" />
+        <br />
+        Browse events submitted by participants for Burning Man  {{ year.0.year }}: {{ year.0.theme }}<br />
+        {% for year in years %}
+          {% if forloop.first %}
+            <a href="{% url playa_events_by_day year_year=year.year playa_day=1 %}">Browse Events</a>
+            {% if my_events %}
+              <a href="{% url playa_events_view_mine year_year=year.year %}"><br/>My Events</a>
+            {% endif %}
+            {% if not forloop.last %}<br /><br />Previous years:<br/>{% endif %}
+          {% else %}
+            <a href="{% url year_info year_year=year.year %}">
+              {{ year.year }}:
+              {{ year.theme }}</a>{% if not forloop.last %}<br/>{% endif %}
+          {% endif %}
+        {% endfor %}
+        </p><br />
+        <br />
+    </div>
+  </div>
+  <div class="promo-item">
+    <div class="image-promo">
+      <a href="{% url playa_event_add_thisyear %}"><img src="{{ STATIC_URL }}images/home-video-intro.jpg" width="198"
+      height="116" alt="Submit Events" title="Submit Events" class="align-left" /></a>
+    </div>
+    <div class="text-promo">
+      <p>
+        <img src="{{ STATIC_URL }}images/header-submit.gif" width="207" height="41" alt=
+             "Submit" /><br />
+        Submit an event for Burning Man {{ years.0.year }}: {{ years.0.theme }}.<br />
+        <a href="{% url playa_event_add_thisyear %}">Submit Your Event</a>
+        </p><br />
+        <br/>
+    </div>
+  </div>
+  {% comment %}
+  <div class="promo-item">
+    <div class="image-promo">
+      <a href="browse/mediatype=photos"><img src=
+      "{{ STATIC_URL }}images/home-arti-intro.jpg" width="198" height="116" alt="Publish"
+      title="Publish" class="align-left" /></a>
+    </div>
+    <div class="text-promo">
+      <p>
+        <img src="{{ STATIC_URL }}images/header-publish.gif" width="207" height="41" alt=
+             "Publish" /><br />
+        Have your event published at Playa Info on-playa or within the
+        printed pages of the What Where When.<br />
+        <a href="">Publish Event</a>
+      </p>
+    </div>
+  </div>
+</div>
+{% endcomment %}
+<div id="homepage-right">
+  <div class="about-info">
+    <p>
+      <img src="{{ STATIC_URL }}images/header-about.gif" width="207" height="41" alt=
+           "About Playa Events" /><br />
+      Things! Things and such-like! Copy to be determined and then it
+      will go here and it'll be delightful and informative. More copy
+      will follow.
+    </p>
+  </div>
+</div>
 {% endblock %}

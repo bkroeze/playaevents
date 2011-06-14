@@ -130,11 +130,11 @@ urlpatterns = patterns(
 
     url(r'^(?P<year_year>\d{4})/playa_event/create/(?P<playa_day>\d{1})/$',
         'playaevents.views.create_or_edit_event',
-        name="playa_event_add"),
+        name="playa_event_add_day"),
     url(r'^playa_event/create/(?P<playa_day>\d{1})/$',
         'playaevents.views.create_or_edit_event',
         {'year_year' : curryear},
-        name="playa_event_add_thisyear"),
+        name="playa_event_add_day_thisyear"),
 
     url(r'^(?P<year_year>\d{4})/playa_event/edit/(?P<playa_event_id>\d+)/$',
         'playaevents.views.create_or_edit_event',

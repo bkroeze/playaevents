@@ -11,16 +11,33 @@ from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.generic.create_update import delete_object
 from playaevents import forms as playaforms
+from playaevents.utilities import get_current_year
 from playaevents.models import Year, CircularStreet, ThemeCamp, ArtInstallation, PlayaEvent
 from swingtime.conf import settings as swingtime_settings
 from swingtime.models import Occurrence
+import logging
+
+log = logging.getLogger(__name__)
+
 
 if swingtime_settings.CALENDAR_FIRST_WEEKDAY is not None:
     calendar.setfirstweekday(swingtime_settings.CALENDAR_FIRST_WEEKDAY)
 
 def index(request, template_name="playaevents/index.html"):
     years = Year.objects.all().order_by('-year')
-    return render_to_response(template_name, {"years": years,}, context_instance=RequestContext(request))
+    user=request.user
+    if user and type(user) != AnonymousUser:
+        my_events = PlayaEvent.objects.filter(year=get_current_year(True), creator=user)
+        my_events = True if my_events.count() > 0 else False
+    else:
+        my_events = False
+
+    log.debug('my_events %s', my_events)
+    ctx = RequestContext(request,
+                         {"years" : years,
+                          "my_events" : my_events})
+
+    return render_to_response(template_name, ctx)
 
 # ---- Year Views ----
 
@@ -259,10 +276,15 @@ def playa_events_by_day(request,
 
     all_day_occurrences = by_all_day.setdefault(True)
     timed_occurrences = by_all_day.setdefault(False)
+    curr_year = get_current_year()
+    is_current_year = int(curr_year) == int(year_year)
+
+    log.debug('year = %s, current_year = %s, current = %s', year, curr_year, is_current_year)
 
     data = dict(
         year = year,
         playa_day = playa_day,
+        is_current_year = is_current_year,
         day = playa_day_dt,
         next = next,
         previous = previous,
