@@ -39,7 +39,11 @@
       </div>
       <div id="main-content">
         <div id="nav-bar">
-          <a href="/">Playa Events Home</a>&nbsp; | &nbsp;<a href="{% url playa_event_add_thisyear %}">Register Your Playa Event</a>&nbsp; | &nbsp;<a href="{% url playa_events_by_day_thisyear playa_day=1 %}">Browse Playa Events</a>
+          <a href="/">Playa Events Home</a>&nbsp; |
+          &nbsp;<a href="{% url playa_event_add_thisyear %}">Register Your Playa Event</a>&nbsp; |
+          &nbsp;<a href="{% url playa_events_by_day_thisyear playa_day=1 %}">Browse Playa Events</a> |
+          &nbsp;<a href="{% url apidocs %}">Playa Events API</a>
+
         </div>
 	<!-- +++++ CONTENT WELL STARTS +++++ -->
         <div id="content-well">

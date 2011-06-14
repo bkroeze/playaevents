@@ -20,7 +20,7 @@ tstreet_handler = Resource(handlers.TimeStreetHandler, authentication=auth)
 
 urlpatterns = patterns(
     '',
-    url(r'^docs/', apidocs),
+    url(r'^docs/', apidocs, name="apidocs"),
     url(r'^user/', user_handler),
     url(r'^year/', year_handler),
     url(r'^(?P<year_year>\d{4})/camp/(?P<camp_id>\d+)/$', camp_handler),
