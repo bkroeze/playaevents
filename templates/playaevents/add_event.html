@@ -11,7 +11,7 @@
 Adding or editing events is closed for {{ year.year }}.   Did you want to add an event for
 <a href="/{{ year.year|last_year }}/playa_event/create">{{ year.year|last_year }}</a>?
 {% else %}
-
+<div id="narrow-page-wrap">
 {% if form.instance.id %}
 	<h2>{% blocktrans with year.year as curryear %}Edit Your Playa Event for {{ curryear }}{% endblocktrans %}</h2>
 {% else %}
@@ -28,7 +28,7 @@ Adding or editing events is closed for {{ year.year }}.   Did you want to add an
 	{% if field.errors %}
 		<tr><td colspan=2>{{ field.errors }}</td></tr>
 	{% endif %}
-	<tr id='{{ field.label|slugify }}-row'><td>{{ field.label_tag }}:<br/><span class='event_form_help'>{{ field.help_text }}</span></td><td> {{ field }}
+	<tr id='{{ field.label|slugify }}-row'><td width="240">{{ field.label_tag }}:<br/><span class='event_form_help'>{{ field.help_text }}</span></td><td> {{ field }}
 	{% ifequal field.label "Print Description" %}
 		<br/><span id="print_description_countdown">150 Characters Available</span>
 	{% endifequal %}
@@ -44,7 +44,7 @@ Adding or editing events is closed for {{ year.year }}.   Did you want to add an
 <input type="submit" value="{% trans "Save" %}">
 <input type="button" value="{% trans "Cancel" %}" onclick="window.location='{{next}}'"/>
 <input type="hidden" name="next" value="{{next|default:""}}"/>
-</form>
+</form></div>
 {% endif %}
 {% endblock %}
 
