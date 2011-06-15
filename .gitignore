@@ -7,7 +7,7 @@ include
 lib
 settings_local.py
 media
-playaevents/static
+static
 parts
 pip-log.txt
 var

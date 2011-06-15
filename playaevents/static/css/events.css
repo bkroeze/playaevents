@@ -1,0 +1,740 @@
+/* 	Stylesheet for the Burning Man Playa Events Calendar
+	playaevents.burningman.com */
+/* Calliope Gazetas - June 2011 */
+
+/* GENERAL FUSS BITS */
+
+body {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 72%;
+    text-align: left;
+    background-color: #fff;
+    color: black;
+    padding: 0;
+    margin: auto;
+}
+
+a img {
+	border: none;
+}
+
+/* CONTAINERS */
+
+#wrap {
+	width: 950px;
+	margin: auto;
+	padding: 0;
+}
+
+#header {
+	height: auto;
+
+}
+
+#page-header {
+	width: 950px;
+	margin: auto;
+	padding: 0;
+	background: url(../images/green_flames.gif) no-repeat top center;
+}
+
+#logo {
+	float: left;
+	margin-left: 80px;
+}
+
+#account-info {
+	float: right;
+	margin: 20px 90px 0 0;
+	text-align: right;
+	line-height: 1.5em;
+}
+
+#pe-header {
+	width: 900px;
+	height: 64px;
+	margin: 0 auto;
+	padding: 0;
+	text-align: center;
+	clear: both;
+	}
+
+#main-content {
+	background: url(../images/content-header-bg.gif) no-repeat top center;
+	width: 950px;
+	margin: auto;
+}
+
+#nav-bar {
+	width: 685px;
+	margin: 0 auto;
+	padding: 9px 0 9px 0;
+	text-align: right;
+}
+
+#nav-bar a {
+	text-decoration: none;
+	font-size: 13px;
+}
+
+#content-well {
+	width: 820px;
+	margin: auto;
+
+}
+
+#content-area {
+	width: 780px;
+	margin: 10px 0 10px 0;
+	padding: 10px 20px 20px 20px;
+
+}
+
+#page-title-nav {
+	padding: 0;
+	margin: 0;
+}
+
+
+#single-item {
+	clear: both;
+	width: 740px;
+	margin: auto;
+	padding: 20px 0 0 0;
+}
+
+#image_box {
+	padding: 20px 0 0 0;
+	margin: 0;
+	float: left;
+}
+
+#image_preview {
+	padding: 6px;
+	margin: 0;
+	height: 250px;
+	border: 1px solid #ccc;
+}
+
+#metadata_box {
+	margin: 20px 0 0 0;
+	padding: 0 0 0 20px;
+	width: 300px;
+	float: left;
+}
+
+#footer {
+	background: url(../images/green_footer.gif) no-repeat top center;
+	width: 950px;
+	height: 140px;
+	margin: 40px 0 0 0;
+	padding: 120px 0 20px 0;
+	text-align: center;
+	font-size: 10px;
+	color:  #666;
+	clear: both;
+
+}
+
+/* HOMEPAGE ELEMENTS */
+
+#homepage-left {
+	float: left;
+	width: 480px;
+	margin: 0;
+	padding: 0 25px 0 0;
+	border-right: 1px solid #ddd;
+}
+
+#homepage-right {
+	float: right;
+	width: 240px;
+	margin: 0;
+	padding: 0;
+}
+
+.promo-item {
+	margin: 0;
+}
+
+
+
+.promo-item-odd {
+	padding: 10px 10px 0 0;
+	background-repeat: repeat-y;
+	background-position: top center;
+	background: url(../images/bg-home-promo.gif);
+
+}
+
+
+.promo-item img {
+	padding: 0 20px 0 0;
+	margin: 0;
+}
+
+.promo-item img a {
+	text-decoration: none !important;
+	border: 0px;
+}
+
+.image-promo {
+	margin: 0 0 20px 0;
+	float: left;
+}
+
+.text-promo {
+	margin: 0 0 0  218px;
+}
+
+
+/* THUMBNAIL ELEMENTS */
+
+.thumbnail-lists {
+	clear: both;
+	padding-top: 20px;
+}
+
+.thumbnail-item {
+	background: url(/static/polaroid-single.png) no-repeat center center;
+	clear: none;
+    float: left;
+    height: 185px;
+    width: 143px;
+    margin: 6px 0 0 0;
+    padding: 0px 6px;
+    font-size: 0.9em;
+    text-align: center;
+}
+
+.thumbnail-wrap {
+    height: 150px;
+    width: 143px;
+    margin: 18px 0 0 2px;
+}
+
+.thumbnail-image {
+	height: 128px;
+	margin: 0 auto;
+	padding: 0;
+}
+
+.thumbnail-lists a {
+	color: #333;
+    text-decoration: none;
+}
+
+.thumb-text {
+	position: relative;
+	top: 0px;
+}
+
+
+/* GENERAL TYPOGRAPHY */
+
+h1, h2, h3, h4, h5 {
+	color: #693;
+}
+
+h1 {
+	font-size: 2em;
+	padding: 0 0 16px 0;
+	font-weight: normal;
+}
+
+#page-title-nav h1 {
+	float: left;
+	margin-top: 8px;
+}
+
+
+h2 {
+	font-size: 1.6em;
+}
+
+a {
+    color: #693;
+}
+
+p a:link, p a:visited {
+    color: #693;
+    text-decoration: none;
+}
+
+p a:hover {
+	color: #9c3;
+    text-decoration: none;
+
+}
+
+p {
+	font-size: 1.0em;
+	line-height: 1.6em;
+}
+
+
+#account-info a {
+	text-decoration: none;
+	color: #693;
+	}
+
+#account-info a:hover {
+	color: #9c3;
+    text-decoration: none;
+    }
+
+#nav-bar a {
+	text-decoration: none;
+	color: #693;
+}
+
+#nav-bar a:hover {
+	color: #9c3;
+    text-decoration: none;
+    }
+
+#footer a {
+	text-decoration: none;
+}
+
+#footer a:hover {
+	color: #9c3;
+	text-decoration: none;
+}
+
+/* METADATA INFO */
+
+
+.metadata_key, .metadata_value {
+	line-height: 1.7em;
+}
+
+.metadata_value_subhead {
+	font-size: 1.8em;
+	padding: 0;
+	margin: 0;
+}
+
+.metadata_value, #video_metadata div {
+	padding: 0 0 5px 0;
+}
+
+/* CONTRIBUTOR LIST NAV */
+
+#cont-alpha-nav ul {
+height: 24px;
+	width: auto;
+	background: #efefef;
+	border-top: 1px #c6c8c8 solid;
+	border-bottom: 1px #c6c8c8 solid;
+	padding-top: 7px;
+	margin-top: 20px;
+
+}
+
+#cont-alpha-nav li {
+	list-style-type: none;
+	margin: 0;
+	display: inline;
+	font-size: 1.1em;
+	color: #fff;
+
+}
+
+#cont-alpha-nav li a {
+	color: #747474;
+	padding: 9px 6px;
+	height: 28px;
+	font-weight: bold;
+
+
+}
+
+#cont-alpha-nav li a:hover {
+	color: #900;
+	padding: 9px 6px;
+	background-color: #fff;
+	height: 28px;
+	border-top: none;
+	border-bottom: none;
+	font-weight: bold;
+}
+
+#cont-alpha-nav li .current-alpha a {
+	color: #900;
+	padding: 9px 6px;
+	margin: 0;
+	background-color: #fff;
+	height: 28px;
+	border-top: none;
+	border-bottom: none;
+	font-weight: bold;
+}
+
+/* CONTRIBUTOR PAGE ELEMENTS */
+
+
+#contrib-columns {
+	margin: auto;
+	padding-top: 20px;
+}
+
+#big-letter {
+	font-size: 3em;
+	color: #747474;
+	text-align: right;
+	width: 50px;
+	margin: 0 40px 0 150px;
+	float: left;
+}
+
+#cont-column-one {
+	width: 200px;
+	margin: 10px 20px 0 0;
+	float: left;
+
+}
+
+#cont-column-two {
+	width: 200px;
+	margin: 10px 0 0 0;
+	float: left;
+
+}
+
+#cont-clear {
+	clear: both;
+	}
+
+
+/* CLEAR CLASS */
+
+.clear {
+	clear: both;
+}
+
+
+/* USER LISTS */
+
+#userlist-wrap {
+	padding: 40px 0 0 0;
+	clear: both;
+
+}
+
+#userlist {
+	padding: 6px 10px;
+	border: 1px #0cdfe2 solid;
+	background: #f0fdfb;
+
+}
+
+#userlist ul {
+	width: auto;
+}
+
+#userlist h3 {
+	padding: 0 0 0 20px;
+}
+
+#userlist li {
+	list-style-type: none;
+}
+
+
+/* SEARCH BAR INPUT/SELECT POSITIONING */
+
+#search-bar input {
+    border: 1px solid #a8a8a8;
+    width: 110px;
+    margin: 0;
+    padding: 0;
+    background: none;
+}
+
+#search-bar select {
+    margin: 0 2px;
+    padding: 0;
+}
+
+#search-bar .cont-link {
+	float: right;
+	margin: 0;
+	padding: 0 0 0 12px;
+}
+
+/* NAVIGATION */
+
+#globalnav {
+	clear: both;
+	color: #333;
+	font-size: 11px;
+	font-family: arial, helvetica, sans-serif;
+	font-weight: bold;
+	line-height: 16px;
+	width: 741px;
+	height: 64px;
+	text-align: center;
+	padding: 20px 0 0 0;
+	margin: auto;
+}
+
+
+#globalnav a {color: #360;
+	font-weight: normal;
+	background-color: transparent;
+	text-decoration: none;}
+
+#globalnav a:hover {color: #693;
+	text-decoration: underline;}
+
+#globalnav span.globalnavcat {color: #666;
+	font-weight: normal;}
+
+
+.thumbnail-nav  {
+	float: right;
+	height: 29px;
+	padding: 0;
+	margin: 0;
+}
+
+.thumbnail-nav-text {
+	display: inline;
+	background: url(/static/thumbnail-bg.gif);
+	margin: 0;
+	padding: 8px 0 6px 0;
+	height: 18px;
+ }
+
+ .end-left {
+	margin: 0;
+	padding: 0;
+	position: relative;
+	top: 9px;
+	height: 29px;
+
+}
+
+.end-right {
+	margin: 0;
+	padding: 0;
+	position: relative;
+	top: 9px;
+	height: 29px;
+
+
+}
+
+
+.thumbnail-nav-text  a {
+	text-decoration: none;
+}
+
+.thumbnail-nav-text  a:hover {
+	text-decoration: underline;
+}
+
+.previous, .listingPrevious, .listingThumbnails, .listingNumber {
+	padding: 0 20px 0 0;
+}
+
+.next {
+	padding: 0 0 0 20px;
+}
+
+
+
+
+
+#contrib-mod-nav ul {
+	text-align: right;
+	width: auto;
+	margin: 0 3px 20px 0;
+}
+
+#contrib-mod-nav li {
+	display: inline;
+	list-style-type: none;
+
+}
+
+
+#contrib-mod-nav li a {
+	font-size: 1.05em;
+	padding: 6px 10px;
+	margin: 0 2px;
+	border: 1px #99cccc solid;
+	font-weight: bold;
+	background: #f0fdfb;
+
+
+}
+
+#contrib-mod-nav li a:hover {
+	padding: 6px 10px;
+	color: #fff;
+	margin: 0 2px;
+	border: 1px #1f8da9 solid;
+	background-color: #1f8da9;
+	font-weight: bold;
+
+	}
+
+
+#contrib-mod-nav .current-cont-nav a {
+	color: #fff;
+	border: 1px #1f8da9 solid;
+	background-color: #1f8da9;
+	font-weight: bold;
+
+	}
+
+/* IMAGES */
+
+.align-right { float:right; margin: 0 0 15px 15px; }
+
+.align-left { float:left; margin: 0 15px 15px 0; }
+
+#content-well img {border: none;}
+
+#search-bar img {
+	position: relative; top: -1px;
+	margin-right: 4px;
+}
+
+/* EVENT TABLES */
+
+#daily_events {
+	margin: 0 auto;
+	width: 500px;
+}
+
+#date-nav {
+	margin: 0;
+	width: auto;
+	padding: 0 0 10px 0;
+	font-size: 14px;
+}
+
+#date-nav h4 {
+	margin: 3px 0 10px 0;
+	padding: 0 0 6px 0;
+}
+
+#date-nav h4 a {
+text-decoration: none;
+}
+
+.span-left {
+	float: left;
+	width: auto;
+}
+
+.span-right {
+	float: right;
+	width: auto;
+}
+
+#daily_events {
+	clear: both;
+	border: 1px solid #d9d9d9;
+	padding: 10px 20px 20px 20px;
+}
+
+#daily-box-wrap {
+	width: 540px;
+}
+
+.event_actions {
+	padding: 0 0 20px 0;
+}
+
+.event-d {
+	width: 500px;
+}
+
+.event-name {
+	margin: 0;
+	width: 500px;
+}
+
+.event-table {
+	margin: 0 auto;
+	width: 500px;
+	border: 1px solid #d9d9d9;
+	padding: 0 20px 20px 20px;
+}
+
+.all_day_listing ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.all_day_listing ul li {
+	background: #ecf7fe;
+	padding: 7px 20px;
+	margin-bottom: 4px;
+}
+
+.timed_listing ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.timed_listing ul li {
+	background: #faf6ea;
+	padding: 7px 20px;
+	margin-bottom: 4px;
+}
+
+.day_top_sub_header {
+	color: #eb9540;
+	font-weight: bold;
+	font-size: 15px;
+	padding: 6px 0 0 0;
+	line-height: 32px;
+}
+
+.day_sub_header {
+	color: #c66b11;
+}
+
+
+#create-new {
+	color: #1a1c1e;
+	text-align: left;
+	margin: -28px 0 0 342px;
+	background: url(../images/bg-create-button.gif) no-repeat;
+	width: 170px;
+	height: 27px;
+	line-height: 24px;
+}
+
+
+
+#create-new a {
+	color: #fff;
+	text-decoration: none;
+	margin: 40px 0 0 0;
+	padding: 12px 6px 0 42px;
+	font-size: 12px;
+}
+
+#create-new a:hover {
+	color: #ffdb60;
+}
+
+
+#narrow-page-wrap {
+	width: 600px;
+	margin: 0 auto;
+}
+
+/* ITEM PAGING ARROWS */
+
+.arrow {
+	position: relative; top: 2px;
+}
