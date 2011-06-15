@@ -28,12 +28,11 @@
         <h4>
           {% if next_day %}
           <a href="{% url playa_events_by_day year.year next_day %}">
-            <img src="{{ STATIC_URL }}images/nav-next-arrow.gif" alt="Next Day" />
-            {{ next_day_dt|date:"l, N j, y" }}
+            {{ next_day_dt|date:"l, N j, y" }}&nbsp;<img src="{{ STATIC_URL }}images/nav-next-arrow.gif" alt="Next Day" />
           </a>
           {% else %}
           <span style="color:#D3D3D3">
-            <img src="{{ STATIC_URL }}images/nav-grey-next-arrow.gif" width="15" height="13" />&nbsp;Next Day
+            Next Day&nbsp;<img src="{{ STATIC_URL }}images/nav-grey-next-arrow.gif" width="15" height="13" />
           </span>
           {% endif %}
         </h4>
