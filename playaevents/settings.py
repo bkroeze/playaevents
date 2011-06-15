@@ -47,6 +47,7 @@ ROOT_URLCONF = 'playaevents.urls'
 ACCOUNT_ACTIVATION_DAYS = 14
 AUTH_PROFILE_MODULE = 'bmprofile.BmProfile'
 LOGIN_REDIRECT_URL = '/'
+LOGOUT_URL = '/'
 
 INSTALLED_APPS = (
     'django.contrib.auth',

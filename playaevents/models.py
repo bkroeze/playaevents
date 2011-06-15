@@ -144,6 +144,9 @@ class PlayaEvent(Event):
   list_contact_online = models.NullBooleanField()
   creator = models.ForeignKey(User, null=False)
   moderation =  models.CharField(max_length=1, choices=MODERATION_CHOICES, default='U')
+  speaker_series = models.NullBooleanField(default=False)
+  password_hint = models.CharField(max_length=120, blank=True, null=True)
+  password = models.CharField(max_length=40)
 
   def __unicode__(self):
     return self.year.year + ":" + self.title

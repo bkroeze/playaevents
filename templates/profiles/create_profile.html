@@ -5,8 +5,9 @@
 <h1>Create contact info for {{ user }} </h1>
 
 <form method="POST" action="">
-    {{ form }}
-    <input type="submit" name="submit" value="Create" id="submit">
+    {% csrf_token %}
+    <p>Playaname: {{ form.playaname }}</p>
+    <input type="submit" name="submit" value="Create" id="submit" />
 </form>
 
 {% endblock content %}

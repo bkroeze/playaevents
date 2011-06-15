@@ -116,6 +116,9 @@ class PlayaEventHandler(BasePlayaEventHandler, BaseHandler):
 
     def _create_or_update(self, request, year_year=None, playa_event_id=None):
         user = request.user
+        if not user.get_profile().api_allowed:
+            return rc_response(request, rc.BAD_REQUEST, 'User not permitted to use the API')
+
         method = request.method
 
         if method == "PUT":
@@ -231,6 +234,10 @@ class PlayaEventHandler(BasePlayaEventHandler, BaseHandler):
 
     def delete(self, request, year_year=None, playa_event_id=None):
         log.debug('PlayaEventHandler DELETE: %s %s', year_year, playa_event_id)
+        user = request.user
+        if not user.get_profile().api_allowed:
+            return rc_response(request, rc.BAD_REQUEST, 'User not permitted to use the API')
+
         if (playa_event_id):
             try:
                 obj = PlayaEvent.objects.get(pk=playa_event_id)
@@ -284,6 +291,9 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
 
     def _create_or_update(self, request, year_year=None, camp_id=None):
         user = request.user
+        if not user.get_profile().api_allowed:
+            return rc_response(request, rc.BAD_REQUEST, 'User not permitted to use the API')
+
         method = request.method
 
         if method == "PUT":
@@ -381,6 +391,10 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
 
     def delete(self, request, year_year=None, camp_id=None):
         log.debug('ThemeCampHandler DELETE: %s %s', year_year, camp_id)
+        user = request.user
+        if not user.get_profile().api_allowed:
+            return rc_response(request, rc.BAD_REQUEST, 'User not permitted to use the API')
+
         if (camp_id):
             try:
                 obj = ThemeCamp.objects.get(pk=camp_id)

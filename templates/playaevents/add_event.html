@@ -2,7 +2,7 @@
 {% load i18n playaevents_tags %}
 {% block head_title %}{% blocktrans %}Create or Edit Your Playa Event for {{ year.year }}{% endblocktrans %}{% endblock %}
 {% block extra_head %}
- <script src="{{ STATIC_URL }}js/event_form.js?version=1" type="text/javascript"></script>
+ <script src="{{ STATIC_URL }}js/event_form.js?version=2" type="text/javascript"></script>
 {% endblock %}
 {% block body %}
 
@@ -35,6 +35,10 @@ Adding or editing events is closed for {{ year.year }}.   Did you want to add an
 	{% ifequal field.label "Online Description" %}
 		<br/><span id="online_description_countdown">2000 Characters Available</span>
 	{% endifequal %}
+	{% ifequal field.label "Event Password Hint" %}
+		<br/><span id="password_hint_countdown">120 Characters Available</span>
+	{% endifequal %}
+
 	</td></tr>
     {% endfor %}
 </table>

@@ -125,22 +125,91 @@ class PlayaEventForm(forms.ModelForm):
     playa_day_choices_short=[(d, d.strftime('%A %d')) for d in year.daterange()]
 
     title  = forms.CharField(required=True, max_length=50, label='Title')
-    print_description  = forms.CharField(required=True, max_length=150, label='Print Description', help_text="Print description for publication in the What Where When. 150 characters max.", widget=widgets.Textarea(attrs={'rows':'5', 'cols':'40'}))
-    description  = forms.CharField(required=True, max_length=2000, label='Online Description', widget=widgets.Textarea(attrs={'rows':'5', 'cols':'40'}))
-    event_type = forms.ModelChoiceField(queryset=EventType.objects.all(), empty_label=None, label='Event Type')
-    url  = forms.URLField(required=False, verify_exists=True, label='URL')
+
+    print_description  = forms.CharField(
+        required=True, max_length=150,
+        label='Print Description',
+        help_text="Print description for publication in the What Where When. 150 characters max.",
+        widget=widgets.Textarea(attrs={'rows':'5', 'cols':'40'}))
+
+    description  = forms.CharField(
+        required=True, max_length=2000,
+        label='Online Description',
+        widget=widgets.Textarea(attrs={'rows':'5', 'cols':'40'}))
+
+    event_type = forms.ModelChoiceField(
+        queryset=EventType.objects.all(),
+        empty_label=None, label='Event Type')
+
+    speaker_series = forms.BooleanField(
+        required=False,
+        label="Is this part of the Speaker Series?",
+        initial=False)
+
+    url  = forms.URLField(
+        required=False,
+        verify_exists=True,
+        label='URL')
+
     contact_email = forms.EmailField(required=False, label='Contact email')
-    other_location = forms.CharField(required=False, label='Other Location', max_length=150)
-    hosted_by_camp = PlayaModelChoiceField(required=False, label='Hosted By Camp',queryset=ThemeCamp.objects.filter(year=year).extra(select={'lower_name': 'lower(name)'}).order_by('lower_name'))
-    located_at_art = PlayaModelChoiceField(required=False, label='Located at Art Installation', queryset=ArtInstallation.objects.filter(year=year).extra(select={'lower_name': 'lower(name)'}).order_by('lower_name'))
-    start_time=forms.DateTimeField(label='Start', required=True, widget=PlayaSplitDateTimeWidget(choices=playa_day_choices))
-    check_location=forms.BooleanField(required=False, label='Check Playa Info for camp location', initial=False)
-    end_time=forms.DateTimeField(label='End', required=True, widget=PlayaSplitDateTimeWidget(choices=playa_day_choices))
-    all_day=forms.BooleanField(required=False, label='All Day Event')
-    repeats=forms.BooleanField(required=False, label='Repeats', help_text='If your event repeats at different times over several days or multiple times in a day you will need to create separate events for the different times.')
-    repeat_days = MultipleIntegerField(playa_day_choices_short, label='Repeat Days',widget=forms.CheckboxSelectMultiple)
-    list_online=forms.BooleanField(required=False, label='List Event Online', initial=False)
-    list_contact_online=forms.BooleanField(required=False, label='List Contact Info Online', initial=False)
+
+    other_location = forms.CharField(required=False,
+                                     label='Other Location', max_length=150)
+
+    hosted_by_camp = PlayaModelChoiceField(
+        required=False,
+        label='Hosted By Camp',
+        queryset=ThemeCamp.objects.filter(year=year).extra(
+            select={'lower_name': 'lower(name)'}).order_by('lower_name'))
+
+    located_at_art = PlayaModelChoiceField(
+        required=False,
+        label='Located at Art Installation',
+        queryset=ArtInstallation.objects.filter(year=year).extra(
+            select={'lower_name': 'lower(name)'}).order_by('lower_name'))
+
+    start_time = forms.DateTimeField(
+        label='Start', required=True,
+        widget=PlayaSplitDateTimeWidget(choices=playa_day_choices))
+
+    check_location = forms.BooleanField(
+        required=False, label='Check Playa Info for camp location',
+        initial=False)
+
+    end_time = forms.DateTimeField(
+        label='End',
+        required=True,
+        widget=PlayaSplitDateTimeWidget(choices=playa_day_choices))
+
+    all_day = forms.BooleanField(required=False, label='All Day Event')
+
+    repeats = forms.BooleanField(
+        required=False,
+        label='Repeats',
+        help_text='If your event repeats at different times over several days or multiple times in a day you will need to create separate events for the different times.')
+
+    repeat_days = MultipleIntegerField(
+        playa_day_choices_short,
+        label='Repeat Days',widget=forms.CheckboxSelectMultiple)
+
+    list_online = forms.BooleanField(
+        required=False,
+        label='List Event Online', initial=False)
+
+    list_contact_online = forms.BooleanField(
+        required=False, label='List Contact Info Online', initial=False)
+
+    password = forms.CharField(
+        required=False, max_length=40,
+        widget=widgets.PasswordInput(render_value=True),
+        label='Event Password',
+        help_text='On-Playa, you will be able to use this password to update the event.')
+
+    password_hint = forms.CharField(
+        required=False, max_length=120,
+        widget=widgets.Textarea(attrs={'rows':'5', 'cols':'40'}),
+        label='Event Password Hint',
+        help_text='On-Playa, you or other people involved with the event will be able to use this hint to remember your password.')
 
     def __init__(self, *args, **kwargs):
         super(PlayaEventForm, self).__init__(*args, **kwargs)
@@ -196,22 +265,28 @@ class PlayaEventForm(forms.ModelForm):
             logging.debug("existing_event = False")
             playa_event = PlayaEvent()
 
+        data = self.cleaned_data
+
         playa_event.year=self.year
         playa_event.creator=user
-        playa_event.title = self.cleaned_data['title']
-        playa_event.slug = slugify(self.cleaned_data['title'])
-        playa_event.description = self.cleaned_data['description'].strip()
-        playa_event.print_description = self.cleaned_data['print_description'].strip()
-        playa_event.event_type = self.cleaned_data['event_type']
-        playa_event.url=self.cleaned_data['url']
-        playa_event.contact_email=self.cleaned_data['contact_email']
-        playa_event.hosted_by_camp=self.cleaned_data['hosted_by_camp']
-        playa_event.located_at_art = self.cleaned_data['located_at_art']
-        playa_event.other_location=self.cleaned_data['other_location']
-        playa_event.check_location=self.cleaned_data['check_location']
-        playa_event.all_day = self.cleaned_data['all_day']
-        playa_event.list_online=self.cleaned_data['list_online']
-        playa_event.list_contact_online=self.cleaned_data['list_contact_online']
+        playa_event.title = data['title']
+        playa_event.slug = slugify(data['title'])
+        playa_event.description = data['description'].strip()
+        playa_event.print_description = data['print_description'].strip()
+        playa_event.event_type = data['event_type']
+        playa_event.url=data['url']
+        playa_event.contact_email=data['contact_email']
+        playa_event.hosted_by_camp=data['hosted_by_camp']
+        playa_event.located_at_art = data['located_at_art']
+        playa_event.other_location=data['other_location']
+        playa_event.check_location=data['check_location']
+        playa_event.all_day = data['all_day']
+        playa_event.list_online=data['list_online']
+        playa_event.list_contact_online=data['list_contact_online']
+        playa_event.list_contact_online=data['list_contact_online']
+        playa_event.speaker_series=data['speaker_series']
+        playa_event.password=data['password']
+        playa_event.password_hint=data['password_hint']
 
         playa_event.save()
 
@@ -221,32 +296,32 @@ class PlayaEventForm(forms.ModelForm):
                 occurrence.delete()
 
         # add occurrences
-        if self.cleaned_data['repeats']:
-            if(self.cleaned_data['all_day']):
+        if data['repeats']:
+            if(data['all_day']):
                 start_time = datetime.strptime("1/1/01 00:00", "%d/%m/%y %H:%M").time()
                 end_time = datetime.strptime("1/1/01 23:59", "%d/%m/%y %H:%M").time()
             else:
-                start_time = self.cleaned_data['start_time'].time()
-                end_time = self.cleaned_data['end_time'].time()
-            for day in self.cleaned_data['repeat_days'] :
+                start_time = data['start_time'].time()
+                end_time = data['end_time'].time()
+            for day in data['repeat_days'] :
                 event_start = datetime.combine(datetime.strptime(day, "%Y-%m-%d"), start_time)
                 event_end = datetime.combine(datetime.strptime(day, "%Y-%m-%d"), end_time)
                 playa_event.add_occurrences(event_start,event_end)
-        elif(self.cleaned_data['all_day']):
+        elif(data['all_day']):
             start_time = datetime.strptime("1/1/01 00:00", "%d/%m/%y %H:%M").time()
             end_time = datetime.strptime("1/1/01 23:59", "%d/%m/%y %H:%M").time()
-            event_start = datetime.combine(self.cleaned_data['start_time'].date(), start_time)
-            event_end = datetime.combine(self.cleaned_data['end_time'].date(), end_time)
+            event_start = datetime.combine(data['start_time'].date(), start_time)
+            event_end = datetime.combine(data['end_time'].date(), end_time)
             playa_event.add_occurrences(event_start, event_end)
         else:
-            playa_event.add_occurrences(self.cleaned_data['start_time'], self.cleaned_data['end_time'])
+            playa_event.add_occurrences(data['start_time'], data['end_time'])
 
         return playa_event
 
     class Meta:
         model = PlayaEvent
         exclude = ('year', 'slug', 'location_point', 'location_track', 'creator')
-        fields = ['title', 'print_description', 'description','event_type','url','contact_email','hosted_by_camp','located_at_art','other_location','check_location','all_day', 'start_time','end_time', 'repeats', 'repeat_days', 'list_online', 'list_contact_online']
+        fields = ['title', 'print_description', 'description','event_type','speaker_series','url','contact_email','hosted_by_camp','located_at_art','other_location','check_location','all_day', 'start_time','end_time', 'repeats', 'repeat_days', 'list_online', 'list_contact_online', 'password', 'password_hint']
 
 class PlayaEventOccurrenceForm(forms.ModelForm):
     '''

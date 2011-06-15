@@ -5,9 +5,8 @@
 <h1>Contact info for {{ profile.name }} </h1>
 
 <p>Playaname: {{ profile.playaname|default:profile.user.username }}</p>
-<p>API Key: {{ profile.userkey.key }}</p>
-<br/>
 <p><a href="{% url auth_password_change %}">Change password</a></p>
 <p><a href="{% url profiles_edit_profile %}">Edit my information</a></p>
+{% if profile.api_allowed %}<p>API Key: {{ profile.userkey.key }}</p>{% endif %}
 
 {% endblock content %}
