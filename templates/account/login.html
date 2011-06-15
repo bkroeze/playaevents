@@ -6,6 +6,7 @@
 
 {% block body %}
     <h1>{% trans "Log In" %}</h1>
+    <div id="narrow-page-wrap">
     <p>You will need to <a href="{% url acct_signup %}">register</a> a new account to submit an event. If you don't yet have an account, please go to our <a href="{% url acct_signup %}">sign up</a> form to get started. <br /><b>Please note that any previous accounts on other sites will not work here.</b></p>
     {% if user.is_authenticated %}
         <p><span class="warning">{% trans "Note" %}</span>: {% blocktrans %}you are already logged in as {{ user }}.{% endblocktrans %}</p>
@@ -21,7 +22,7 @@
 
     <p>{% blocktrans %}If you have any trouble logging in to your account, contact us at <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.{% endblocktrans %}</p>
 {% endblock %}
-
+</div>
 {% block extra_body %}
 <script>
     $("#id_username").focus();
