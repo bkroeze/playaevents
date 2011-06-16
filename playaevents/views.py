@@ -284,6 +284,12 @@ def playa_events_by_day(request,
 
     log.debug('year = %s, current_year = %s, current = %s', year, curr_year, is_current_year)
 
+    if previous_playa_day is not None:
+        previous_playa_day += 1
+
+    if next_playa_day is not None:
+        next_playa_day += 1
+
     data = dict(
         year = year,
         playa_day = playa_day,
@@ -298,6 +304,8 @@ def playa_events_by_day(request,
         event_dates = event_date_list,
         all_day_occ = all_day_occurrences,
         timed_occ = timed_occurrences)
+
+    log.debug('data: %s %s %s', playa_day, previous_playa_day, next_playa_day)
 
     return render_to_response(
         template,
