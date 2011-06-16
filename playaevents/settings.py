@@ -43,8 +43,6 @@ MIDDLEWARE_CLASSES = (
     'playaevents.middleware.LoggedInMiddleware'
 )
 
-LOGGED_IN_ONLY = True
-
 ROOT_URLCONF = 'playaevents.urls'
 
 ACCOUNT_ACTIVATION_DAYS = 14
