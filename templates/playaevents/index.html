@@ -30,7 +30,7 @@
             {% endif %}
             {% if not forloop.last %}<br /><br />Previous years:<br/>{% endif %}
           {% else %}
-            <a href="{% url year_info year_year=year.year %}">
+            <a href="{% url playa_events_by_day year_year=year.year playa_day=1 %}">
               {{ year.year }}:
               {{ year.theme }}</a>{% if not forloop.last %}<br/>{% endif %}
           {% endif %}

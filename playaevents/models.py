@@ -29,8 +29,11 @@ class Year(models.Model):
       """
       Returns a list of datetime objects for every day of the event
       """
-      numdays = (self.event_end - self.event_start).days + 1
-      return [self.event_start + timedelta(days=x) for x in range(0,numdays)]
+      if self.event_start and self.event_end:
+          numdays = (self.event_end - self.event_start).days + 1
+          return [self.event_start + timedelta(days=x) for x in range(0,numdays)]
+      else:
+          return []
 
 
 
@@ -78,7 +81,6 @@ class ThemeCamp(models.Model):
     list_online = models.NullBooleanField(null=False, blank=False, default=True)
     circular_street = models.ForeignKey(CircularStreet, null=True, blank=True)
     time_address = models.TimeField(null=True, blank=True)
-    participants = models.ManyToManyField(User, null=True, blank=True)
     bm_fm_id = models.IntegerField(null=True,blank=True)
     deleted = models.NullBooleanField(null=True, blank=True, default=False)
 
@@ -146,7 +148,7 @@ class PlayaEvent(Event):
   moderation =  models.CharField(max_length=1, choices=MODERATION_CHOICES, default='U')
   speaker_series = models.NullBooleanField(default=False)
   password_hint = models.CharField(max_length=120, blank=True, null=True)
-  password = models.CharField(max_length=40)
+  password = models.CharField(max_length=40, blank=True, null=True)
 
   def __unicode__(self):
     return self.year.year + ":" + self.title
