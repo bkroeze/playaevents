@@ -42,7 +42,7 @@ Adding or editing events is closed for {{ year.year }}.   Did you want to add an
 	<p><b>All events are moderated before being posted to the events calendar. Do not panic if you do not see your event immediately after submitting it. It may take 24 to 48 hours to be posted. </b></p>
 
 <input type="submit" value="{% trans "Submit" %}">
-<input type="button" value="{% trans "Cancel" %}" onclick="window.location='{{next}}'"/>
+<input type="button" value="{% trans "Cancel" %}" onclick="window.location='/'"/>
 <input type="hidden" name="next" value="{{next|default:""}}"/>
 </form></div>
 {% endif %}
