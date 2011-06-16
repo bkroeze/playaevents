@@ -1,24 +1,24 @@
 import calendar
 import csv
 import itertools
+import logging
 
 from datetime import datetime, time
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
+from django.core import urlresolvers
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext, loader
 from django.views.generic.create_update import delete_object
 from playaevents import forms as playaforms
-from playaevents.utilities import get_current_year
 from playaevents.models import Year, CircularStreet, ThemeCamp, ArtInstallation, PlayaEvent
+from playaevents.utilities import get_current_year
 from swingtime.conf import settings as swingtime_settings
 from swingtime.models import Occurrence
-import logging
 
 log = logging.getLogger(__name__)
-
 
 if swingtime_settings.CALENDAR_FIRST_WEEKDAY is not None:
     calendar.setfirstweekday(swingtime_settings.CALENDAR_FIRST_WEEKDAY)
@@ -452,7 +452,7 @@ def playa_occurrence_view(request,
                                        event__pk=playa_event_id)
 
     event = get_object_or_404(PlayaEvent, pk=playa_event_id)
-    next = "/playaevents/" + event.year.year + "/playa_event/" + str(event.id)
+    next = urlresolvers.reverse('playa_event_view', kwargs={'year_year' : event.year.year, 'playa_event_id' : event.id})
 
     if request.method == 'POST':
         form = form_class(request.POST, instance=occurrence)
@@ -532,14 +532,15 @@ def delete_event(request,
     next=None):
 
     event = get_object_or_404(PlayaEvent, id=playa_event_id)
-    next = "/playaevents/" + event.year.year + "/playa_events/"
+    url = urlresolvers.reverse('playa_events_by_day', kwargs={'year_year' : event.year.year,
+                                                              'playa_day' : '1'})
 
     return delete_object(
         request,model = PlayaEvent,
         object_id = playa_event_id,
-        post_delete_redirect = next,
+        post_delete_redirect = url,
         template_name = "playaevents/delete_event.html",
-        extra_context = dict(next=next, year=event.year),
+        extra_context = dict(next=url, year=event.year),
         login_required = login_required
     )
 
@@ -551,7 +552,7 @@ def delete_occurrence(request,
     occurrence = get_object_or_404(Occurrence, id=occurrence_id)
     if(Occurrence.objects.filter(event=occurrence.event).count() == 1): #Last Occurrence
         event = get_object_or_404(PlayaEvent, id=occurrence.event.id)
-        next = "/playaevents/" + occurrence.event.playaevent.year.year + "/playa_events/"
+        next = '/'
         return delete_object(
             request,model = PlayaEvent,
             object_id = occurrence.event.id,
@@ -562,7 +563,7 @@ def delete_occurrence(request,
             login_required = login_required
         )
     else:
-        next = "/playaevents/" + year_year + "/playa_event/" + str(occurrence.event.id)
+        next = urlresolvers.reverse('playa_event_view', kwargs={'playa_event_id' : event.id})
         return delete_object(
             request,model = Occurrence,
             object_id = occurrence_id,
