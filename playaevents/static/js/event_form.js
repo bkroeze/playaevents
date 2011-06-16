@@ -41,6 +41,15 @@ function allDayState(all_day_box) {
 
 }
 
+function event_sync_dates() {
+    var val, elt;
+
+    val = $('#id_start_time_0').val();
+    $("#id_end_time_0").val(val);
+    $("select").sb('refresh');
+
+}
+
 $(document).ready(function() {
 
     if($("#existing").val() == "true") {
@@ -78,6 +87,8 @@ $(document).ready(function() {
     $("#id_all_day").click(function () {
         allDayState(this);
     });
+
+    $("#id_start_time_0").change(event_sync_dates);
 
     $("#id_print_description").keyup(function(){
         textCounter(this, $("#print_description_countdown"), 150);
