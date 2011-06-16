@@ -4,6 +4,14 @@
 
 <h2>My Events</h2>
 
+<p>
+    {% ifequal year.year '2010' %}
+    <div id="create-new" style="margin: 0">
+        <a href='/{{year.year}}/playa_event/create'>Create New Event</a>
+    </div>
+    {% endifequal %}
+</p>
+
   {% if approved_events %}
   <h4 class='day_sub_header'>Approved Events</h4>
   <div class='timed_listing'>
@@ -18,13 +26,13 @@
                     {{ o.start_time|date:"l, F jS" }} - All Day
                 {% else %}
                          <li>{{ o.start_time|date:"l, F jS, Y P" }} &ndash;
-                         {{ o.end_time|date:"P" }}</li>
+                         {{ o.end_time|date:"P" }}
                 {% endif %}
             {% endfor %}
             </ul>
         </li>
       {% endfor %}
-    </ul>
+    </ol>
   </div>
   {% endif %}
 
@@ -37,12 +45,12 @@
           <a href="{% url playa_event_view year.year e.id %}">{{ e.title }}</a>
         </li>
       {% endfor %}
-    </ul>
+    </ol>
   </div>
   {% endif %}
 
   {% if rejected_events %}
-  <h4 class='day_sub_header'>Not Approved Events</h4>
+  <h4 class='day_sub_header'>Rejected Events</h4>
   <div class='timed_listing'>
     <ul>
       {% for e in rejected_events %}
@@ -50,13 +58,13 @@
           <a href="{% url playa_event_view year.year e.id %}">{{ e.title }}</a>
         </li>
       {% endfor %}
-    </ul>
+    </ol>
   </div>
   {% endif %}
 
   {% if not approved_events and not unmoderated_events and not rejected_events %}
     <p>No events submitted for {{ request.user.username }}</p>
   {% endif %}
-
+</div>
 {% endblock %}
 

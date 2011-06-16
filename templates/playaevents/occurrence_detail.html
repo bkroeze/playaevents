@@ -4,6 +4,7 @@
  <script src="{{ STATIC_URL }}js/occurrence_form.js" type="text/javascript"></script>
 {% endblock %}
 {% block body %}
+<div id="narrow-page-wrap">
 	{% if occurrence %}
      <h3>Edit Playa Event Occurrence</h3>
 	{% else %}
@@ -62,5 +63,5 @@
 
 	</tbody>
      </table>
-     </form>
+     </form></div>
 {% endblock %}

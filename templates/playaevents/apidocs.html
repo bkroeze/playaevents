@@ -7,6 +7,7 @@
 
 {% block body %}
 <h1>API Documentation</h1>
+<div id="narrow-page-wrap">
 
 <h2>API Overview</h2>
 The Burning Man PlayaEvents API is free for you to use and build with.
@@ -60,26 +61,28 @@ The API supports the following methods to receive Burning Man data.<br/><br/>
   <a href="http://jsbin.com/osoqo3">jQuery Theme Camps example</a> [<a href="http://jsbin.com/osoqo3/edit">source</a>]
 </li>
 <li>
-  Camp with id 223
-  <pre>{{ server }}/api/0.2/2011/camp/223/</pre>
-  <a href="http://jsbin.com/ewude5">jQuery Theme Camp example</a> [<a href="http://jsbin.com/ewude5/edit">source</a>]
+  Camp with id 3510
+  <pre>{{ server }}/api/0.2/2011/camp/3510/</pre>
+  <a href="http://jsbin.com/ewude5/2">jQuery Theme Camp example</a> [<a href="http://jsbin.com/ewude5/2/edit">source</a>]
+</li>
 </ul>
 
 <h3>Art Installations</h3>
 <ul>
 <li>
   <pre>{{ server }}/api/0.2/2011/art/</pre>
-  <a href="http://jsbin.com/opiyo4/202">jQuery Art example</a> [<a href="http://jsbin.com/opiyo4/202/edit">source</a>]
+  <a href="http://jsbin.com/opiyo4/202">jQuery Art Listings example</a> [<a href="http://jsbin.com/opiyo4/202/edit">source</a>]
 </li>
 
 <li>
-  Art with ID 540
-  <pre>{{ server }}/api/0.2/2011/art/540/</pre>
+  Art with ID 1077
+  <pre>{{ server }}/api/0.2/2011/art/1077/</pre>
+  <a href="http://jsbin.com/enixe4">jQuery Art example</a> [<a href="http://jsbin.com/enixe4/edit">source</a>]
 </li>
 </ul>
 
 <h3>Legal</h3>
 © 2011 Black Rock City LLC, all rights reserved. Use of all event information and data restricted to free use<br/>
 These materials are not to be used or distributed in any form which may be sold for profit.
-
+</div>
 {% endblock %}

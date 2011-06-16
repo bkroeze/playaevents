@@ -24,7 +24,9 @@ if swingtime_settings.CALENDAR_FIRST_WEEKDAY is not None:
     calendar.setfirstweekday(swingtime_settings.CALENDAR_FIRST_WEEKDAY)
 
 def index(request, template_name="playaevents/index.html"):
-    years = Year.objects.all().order_by('-year')
+    badyears = [str(y) for y in range(2006,2009)]
+    years = Year.objects.exclude(year__in=badyears).order_by('-year')
+
     user=request.user
     if user and type(user) != AnonymousUser:
         my_events = PlayaEvent.objects.filter(year=get_current_year(True), creator=user)
@@ -215,34 +217,35 @@ def playa_events_by_day(request,
     next = int(year.year) + 1
 
     event_date_list = year.daterange()
+    log.debug('year daterange: %s', event_date_list)
 
     # Normalize playa_day to start at 0
-    playa_day =int(playa_day)
+    playa_day =int(playa_day)-1
 
-    if playa_day < 1:
-        return HttpResponseBadRequest('Bad Request')
+    date_ct = len(event_date_list)-1
 
-    if playa_day > len(event_date_list):
-        return HttpResponseBadRequest('Bad Request')
+    if playa_day < 0:
+        return HttpResponseBadRequest('Bad Request: No such playa day=%s', playa_day+1)
 
-    playa_day_dt = event_date_list[playa_day-1]
+    if playa_day > date_ct:
+        return HttpResponseBadRequest('Bad Request: No such playa day=%s', playa_day+1)
+
+    playa_day_dt = event_date_list[playa_day]
+    log.debug('playa_day: %s', playa_day_dt)
     previous_playa_day = playa_day-1
     next_playa_day = playa_day+1
 
-    if playa_day == 0:
+    if previous_playa_day < 0:
         previous_playa_day = None
         previous_playa_day_dt = None
-        next_playa_day_dt = event_date_list[next_playa_day-1]
+    else:
+        previous_playa_day_dt=event_date_list[previous_playa_day]
 
-    elif playa_day == len(event_date_list):
+    if next_playa_day > date_ct:
         next_playa_day = None
         next_playa_day_dt = None
-        previous_playa_day_dt=event_date_list[previous_playa_day-1]
-
     else:
-        next_playa_day_dt = event_date_list[next_playa_day-1]
-        previous_playa_day_dt=event_date_list[previous_playa_day-1]
-
+        next_playa_day_dt = event_date_list[next_playa_day]
 
     if queryset:
         queryset = queryset._clone()

@@ -280,9 +280,9 @@ class BaseThemeCampHandler(object):
 class AnonymousThemeCampHandler(BaseThemeCampHandler, AnonymousBaseHandler):
     allow_methods = ('GET',)
 
-    def read(self, request, year_year=None, playa_event_id=None):
+    def read(self, request, year_year=None, camp_id=None):
         log.debug('AnonymousThemeCampHandler GET')
-        return super(AnonymousThemeCampHandler, self).read(request, year_year=year_year, playa_event_id=playa_event_id)
+        return super(AnonymousThemeCampHandler, self).read(request, year_year=year_year, camp_id=camp_id)
 
 
 class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
