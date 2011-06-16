@@ -143,14 +143,15 @@ a img {
 	width: 480px;
 	margin: 0;
 	padding: 0 25px 0 0;
-	border-right: 1px solid #ddd;
 }
 
 #homepage-right {
 	float: right;
-	width: 240px;
+	width: 260px;
 	margin: 0;
-	padding: 0;
+	padding: 0 0 0 25px;
+	border-left: 1px solid #ddd;
+
 }
 
 .promo-item {
@@ -721,6 +722,7 @@ text-decoration: none;
 	margin: 40px 0 0 0;
 	padding: 12px 6px 0 42px;
 	font-size: 12px;
+	font-weight: bold;
 }
 
 #create-new a:hover {
