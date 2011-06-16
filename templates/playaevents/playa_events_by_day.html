@@ -39,7 +39,7 @@
       </div>
     </div>
     <div id="daily_events">
-      <span class="day_top_sub_header">Events for {{ next_day_dt|date:"l, N j, y" }}</span>
+      <span class="day_top_sub_header">Events for {{ day|date:"l, N j, y" }}</span>
       {% if is_current_year %}
       <div id="create-new">
         <a href='{% url playa_event_add_day_thisyear playa_day=playa_day %}'>Add Your Event</a>

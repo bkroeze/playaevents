@@ -43,7 +43,7 @@ MIDDLEWARE_CLASSES = (
     'playaevents.middleware.LoggedInMiddleware'
 )
 
-LOGGED_IN_ONLY = True
+LOGGED_IN_ONLY = False
 
 ROOT_URLCONF = 'playaevents.urls'
 
