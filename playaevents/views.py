@@ -8,7 +8,7 @@ from django.contrib.auth.models import AnonymousUser
 from django.db.models import Count
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, render_to_response
-from django.template import RequestContext
+from django.template import RequestContext, loader
 from django.views.generic.create_update import delete_object
 from playaevents import forms as playaforms
 from playaevents.utilities import get_current_year
@@ -834,3 +834,21 @@ def csv_all_day_repeating(request, year_year):
             event_type=''
 
     return response
+
+
+def temporary_unavailable(request, template_name='503.html'):
+    """
+    Default 503 handler, which looks for the requested URL in the redirects
+    table, redirects if found, and displays 404 page if not redirected.
+
+    Templates: `503.html`
+    Context:
+        request_path
+            The path of the requested URL (e.g., '/app/pages/bad_page/')
+    """
+    t = loader.get_template(template_name) # You need to create a 503.html template.
+    content = t.render(RequestContext(request, {}))
+    return HttpResponse(status=503, content=content)
+
+def logged_in_only(request):
+    return temporary_unavailable(request, 'logged_in_only.html')
