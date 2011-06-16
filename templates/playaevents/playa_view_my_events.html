@@ -18,13 +18,13 @@
                     {{ o.start_time|date:"l, F jS" }} - All Day
                 {% else %}
                          <li>{{ o.start_time|date:"l, F jS, Y P" }} &ndash;
-                         {{ o.end_time|date:"P" }}
+                         {{ o.end_time|date:"P" }}</li>
                 {% endif %}
             {% endfor %}
             </ul>
         </li>
       {% endfor %}
-    </ol>
+    </ul>
   </div>
   {% endif %}
 
@@ -37,7 +37,7 @@
           <a href="{% url playa_event_view year.year e.id %}">{{ e.title }}</a>
         </li>
       {% endfor %}
-    </ol>
+    </ul>
   </div>
   {% endif %}
 
@@ -50,7 +50,7 @@
           <a href="{% url playa_event_view year.year e.id %}">{{ e.title }}</a>
         </li>
       {% endfor %}
-    </ol>
+    </ul>
   </div>
   {% endif %}
 

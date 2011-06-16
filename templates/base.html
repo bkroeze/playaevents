@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ STATIC_URL }}css/events.css" />
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
     <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.timePicker.js"></script>
+    <script type="text/javascript" src="{{ STATIC_URL }}js/jquery.sb.js"></script>
     {% block extra_head_base %}
     {% block extra_head %}{% endblock %}
     {% endblock %}
@@ -72,6 +73,11 @@
       </div>
       </div>
       {% block extra_body_base %}`
+      <script type="text/javascript">
+        $(function() {
+            $('select').sb();
+        });
+      </script>
       {% if not debug %}
       <script type="text/javascript">
         //<![CDATA[
