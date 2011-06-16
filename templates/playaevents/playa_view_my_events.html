@@ -1,6 +1,7 @@
 {% extends "playaevents/base.html" %}
 {% block head_title %} {{ year.year }} - Playa Events{% endblock %}
 {% block body %}
+<div id="narrow-page-wrap">
 
 <h2>My Events</h2>
 
@@ -57,6 +58,6 @@
   {% if not approved_events and not unmoderated_events and not rejected_events %}
     <p>No events submitted for {{ request.user.username }}</p>
   {% endif %}
-</div>
+</div></div>
 {% endblock %}
 
