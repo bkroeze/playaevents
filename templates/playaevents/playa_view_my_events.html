@@ -1,9 +1,16 @@
 {% extends "playaevents/base.html" %}
 {% block head_title %} {{ year.year }} - Playa Events{% endblock %}
 {% block body %}
-<div id="narrow-page-wrap">
 
 <h2>My Events</h2>
+
+<p>
+    {% ifequal year.year '2010' %}
+    <div id="create-new" style="margin: 0">
+        <a href='/{{year.year}}/playa_event/create'>Create New Event</a>
+    </div>
+    {% endifequal %}
+</p>
 
   {% if approved_events %}
   <h4 class='day_sub_header'>Approved Events</h4>
@@ -43,7 +50,7 @@
   {% endif %}
 
   {% if rejected_events %}
-  <h4 class='day_sub_header'>Not Approved Events</h4>
+  <h4 class='day_sub_header'>Rejected Events</h4>
   <div class='timed_listing'>
     <ul>
       {% for e in rejected_events %}
@@ -58,6 +65,6 @@
   {% if not approved_events and not unmoderated_events and not rejected_events %}
     <p>No events submitted for {{ request.user.username }}</p>
   {% endif %}
-</div></div>
+</div>
 {% endblock %}
 

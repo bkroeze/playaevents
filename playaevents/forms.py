@@ -143,7 +143,7 @@ class PlayaEventForm(forms.ModelForm):
 
     speaker_series = forms.BooleanField(
         required=False,
-        label="Is this part of the Speaker Series?",
+        label='Is your event part of the &ldquo;Training for a &reg;evolution&rdquo; series?',
         initial=False)
 
     url  = forms.URLField(
@@ -203,13 +203,13 @@ class PlayaEventForm(forms.ModelForm):
         required=False, max_length=40,
         widget=widgets.PasswordInput(render_value=True),
         label='Event Password',
-        help_text='On-Playa, you will be able to use this password to update the event.')
+        help_text='On the Playa Info Directory, you will be able to use this password to update the event.')
 
     password_hint = forms.CharField(
         required=False, max_length=120,
         widget=widgets.Textarea(attrs={'rows':'5', 'cols':'40'}),
         label='Event Password Hint',
-        help_text='On-Playa, you or other people involved with the event will be able to use this hint to remember your password.')
+        help_text='On the PlayaInfo Directory, you or other people involved with the event will be able to use this hint to remember your password.')
 
     def __init__(self, *args, **kwargs):
         super(PlayaEventForm, self).__init__(*args, **kwargs)
