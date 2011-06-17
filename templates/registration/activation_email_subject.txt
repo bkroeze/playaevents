@@ -23,4 +23,4 @@ being used. This template has the following context:
     <http://docs.djangoproject.com/en/dev/ref/contrib/sites/>`_ for
     details regarding these objects' interfaces.
 {% endcomment %}{% load i18n %}
-{% blocktrans with site.name as site_name %}Account activation for {{ site_name }}{% endblocktrans %}
+Account activation at Playa Events
