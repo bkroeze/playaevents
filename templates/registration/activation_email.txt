@@ -35,5 +35,5 @@ within {{ expiration_days }} days, you will have to restart
 the activation process.
 
 Kind regards,
-The Webmaster
+The Playa Events Team
 {% endblocktrans %}
