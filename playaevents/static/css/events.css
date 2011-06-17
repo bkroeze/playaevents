@@ -372,6 +372,11 @@ height: 24px;
 	font-weight: bold;
 }
 
+.error,
+.errorlist {
+    color: red;
+}
+
 /* CONTRIBUTOR PAGE ELEMENTS */
 
 

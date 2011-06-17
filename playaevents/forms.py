@@ -238,12 +238,10 @@ class PlayaEventForm(forms.ModelForm):
 
         if self.cleaned_data['all_day']:
             pass
-        elif self.instance:
-            pass
         elif end < start:
-            raise forms.ValidationError("Event cannot end before it starts!")
+            raise forms.ValidationError("Event cannot end before it starts.")
         elif end == start:
-            raise forms.ValidationError("Event cannot start and end at the same time!")
+            raise forms.ValidationError("Event cannot start and end at the same time.")
 
 
         if(self.cleaned_data['hosted_by_camp'] and self.cleaned_data['located_at_art']):
