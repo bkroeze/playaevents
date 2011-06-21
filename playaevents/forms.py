@@ -173,7 +173,7 @@ class PlayaEventForm(forms.ModelForm):
         widget=PlayaSplitDateTimeWidget(choices=playa_day_choices))
 
     check_location = forms.BooleanField(
-        required=False, label='Check <b>the Directory at</b> Playa Info for camp location',
+        required=False, label='Check the Directory at Playa Info for camp location',
         initial=False)
 
     end_time = forms.DateTimeField(
