@@ -11,7 +11,7 @@
     {% if user.is_authenticated %}
         <p>{% trans "You are already logged in." %}</p>
     {% else %}
-        <p>{% trans "Already have an account?" %} <a href="{% url acct_login %}">{% trans "Log In" %}</a>!</p>
+        <p>{% trans "Already have an account?" %} <a href="{% url auth_login %}">{% trans "Log In" %}</a>!</p>
 
         <form class="signup uniForm" id="signup_form" method="post" action="{% url acct_signup %}">
             <fieldset class="inlineLabels">
@@ -28,7 +28,7 @@
 
         <p>{% blocktrans %}If you have any trouble creating your account, contact us at <a href="mailto:{{ contact_email }}">{{ contact_email }}</a>.{% endblocktrans %}</p>
         {% comment %}
-          <p>If you have OpenID, <a href="{% url acct_login %}">log in</a> using that to begin using this site with OpenID right away.</p>
+          <p>If you have OpenID, <a href="{% url auth_login %}">log in</a> using that to begin using this site with OpenID right away.</p>
         {% endcomment %}
     {% endif %}
 {% endblock %}
