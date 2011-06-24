@@ -94,6 +94,8 @@ CACHE_BACKEND = "memcached://127.0.0.1:11211/"
 
 DEBUG_TOOLBAR_CONFIG = { 'INTERCEPT_REDIRECTS': False }
 
+LOGGED_IN_ONLY = False
+
 from settings_local import *
 
 log.debug('running with DB %s', DATABASE_ENGINE)

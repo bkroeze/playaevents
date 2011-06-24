@@ -10,7 +10,7 @@
 <h2>Welcome to the {{ year.year }} Playa Events Calendar</h2>
 
 {% if not user.is_authenticated %}
-<p>To submit an event, please <a href="{% url auth_login %}">login</a> or <a href="{% url acct_signup %}">sign up</a> for an account.</p>
+<p>To submit an event, please <a href="{% url auth_login %}">login</a> or <a href="{% url registration_register %}">sign up</a> for an account.</p>
 {% else %}
 <p>
     {% if year.year|is_current_year  %}
