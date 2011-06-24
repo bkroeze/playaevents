@@ -3,7 +3,7 @@
 {% block head_title %} {{ year.year }} - {{ theme_camp.name }} {% endblock %}
 {% block extra_head_base %}
 {{ map.media }}
-{% include 'checkins/jqueryui_show_list.html' %}
+{# include 'checkins/jqueryui_show_list.html' #}
 {% endblock %}
 {% block body %}
 <a href='/{{ theme_camp.year.year }}'>{{ theme_camp.year.year }}</a><br />
@@ -67,13 +67,15 @@ tweetmeme_style = 'compact';
 {% endfor %}
 {% endif %}
 
+{% comment %}
 <h3>Checkins</h3>
 <div id="themecamp-checkins">
-{% if request.user.is_authenticated and ALLOW_CHECKINS %}
+  {% if request.user.is_authenticated and ALLOW_CHECKINS %}
 {% add_checkin_for_instance theme_camp request.user %}
 {% latest_checkins_for_instance theme_camp %}
 {% endif %}
 </div>
+{% endcomment %}
 
 {% comment %}
 <br/>
