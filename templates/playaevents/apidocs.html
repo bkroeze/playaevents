@@ -17,19 +17,20 @@ will return JSON. If you wish to consume XML, pass the API the keypair
 format=xml. If you want JSONP, provide the keypair callback=myclbk.
 
 <h2>Methods</h2>
-The API supports the following methods to receive Burning Man data.<br/><br/>
+The API supports the following methods to receive and manipulate PlayaEvents data.<br/><br/>
 
 <h3>Events</h3>
 
+<p>Public API Methods using HTTP GET</p>
 <ul>
 <li>
-  All Events in 2009
+  Retrieve All Events in 2009
   <pre>{{ server }}/api/0.2/2009/event/</pre>
   <a href="http://jsbin.com/ilulu4/240">jQuery Events example</a> [<a href="http://jsbin.com/ilulu4/240/edit">source</a>]
 </li>
 
 <li>
-  Event with ID 1676
+  Retrieve Event with ID 1676
   <pre>{{ server }}/api/0.2/2011/event/1676/</pre>
 </li>
 
@@ -54,7 +55,52 @@ The API supports the following methods to receive Burning Man data.<br/><br/>
 </li>
 </ul>
 
+<p>
+  API methods requiring authentication<br/>
+  <i>These methods must be signed as explained below in the section titled "Authentication"</i>
+</p>
+<ul>
+  <li>
+    Delete an event with ID 1676
+    <br/>
+    Send an HTTP DELETE to the url:
+    <pre>{{ server }}/api/0.2/2011/event/1676/</pre>
+  </li>
+  <li>
+    Create a new event
+    <br/>
+    Send an HTTP POST to the url:
+    <pre>{{ server }}/api/0.2/2011/event/</pre>
+    The POST should have any or all of the fields:
+    <ul>
+      <li>year: a 4 digit string</li>
+      <li>print_description: text</li>
+      <li>url: text</li>
+      <li>contact_email: text</li>
+      <li>other_location: text</li>
+      <li>slug: text (usually autocalculated, not needed)</li>
+      <li>moderation: U, A, or R. U=unreviewed, A=Accepted, R=Rejected</li>
+      <li>hosted_by_camp: the camp id, as retrieved using the camp API method</li>
+      <li>located_at_art: the art id, as retrieved using the art installation API method</li>
+      <li>check_location: boolean &ldquo;TRUE&rdquo; or &ldquo;FALSE&rdquo;</li>
+      <li>all_day: boolean &ldquo;TRUE&rdquo; or &ldquo;FALSE&rdquo;</li>
+      <li>list_online: boolean &ldquo;TRUE&rdquo; or &ldquo;FALSE&rdquo;</li>
+      <li>list_contact_online: boolean &ldquo;TRUE&rdquo; or &ldquo;FALSE&rdquo;</li>
+    </ul>
+  </li>
+  <li>
+    Edit event #1676
+    <br/>
+    Send an HTTP PUT to the url:
+    <pre>{{ server }}/api/0.2/2011/event/1676/</pre>
+    The PUT should have any or all of the fields listed above for the POST.
+  </li>
+</ul>
+
+
 <h3>Theme Camps</h3>
+
+<p>Public API Methods using HTTP GET</p>
 <ul>
 <li>
   <pre>{{ server }}/api/0.2/2011/camp/</pre>
@@ -67,21 +113,255 @@ The API supports the following methods to receive Burning Man data.<br/><br/>
 </li>
 </ul>
 
-<h3>Art Installations</h3>
+<p>
+  API methods requiring authentication<br/>
+  <i>These methods must be signed as explained below in the section titled "Authentication"</i>
+</p>
 <ul>
-<li>
-  <pre>{{ server }}/api/0.2/2011/art/</pre>
-  <a href="http://jsbin.com/opiyo4/202">jQuery Art Listings example</a> [<a href="http://jsbin.com/opiyo4/202/edit">source</a>]
-</li>
-
-<li>
-  Art with ID 1077
-  <pre>{{ server }}/api/0.2/2011/art/1077/</pre>
-  <a href="http://jsbin.com/enixe4">jQuery Art example</a> [<a href="http://jsbin.com/enixe4/edit">source</a>]
-</li>
+  <li>
+    Delete the camp with ID 1676
+    <br/>
+    Send an HTTP DELETE to the url:
+    <pre>{{ server }}/api/0.2/2011/camp/1676/</pre>
+  </li>
+  <li>
+    Create a new camp
+    <br/>
+    Send an HTTP POST to the url:
+    <pre>{{ server }}/api/0.2/2011/camp/</pre>
+    The POST should have any or all of the fields:
+    <ul>
+      <li>year: a 4 digit string</li>
+      <li>name: text</li>
+      <li>print_description: text</li>
+      <li>url: text</li>
+      <li>hometown: text</li>
+      <li>slug: text (usually autocalculated, not needed)</li>
+      <li>list_online: boolean &ldquo;TRUE&rdquo; or &ldquo;FALSE&rdquo;</li>
+      <li>circular_street: id of the street as retrieved using the Circular street API method</li>
+      <li>time_street: id of the street as retrieved using the Time street API method</li>
+    </ul>
+  </li>
+  <li>
+    Edit camp #1676
+    <br/>
+    Send an HTTP PUT to the url:
+    <pre>{{ server }}/api/0.2/2011/event/1676/</pre>
+    The PUT should have any or all of the fields listed above for the POST.
+  </li>
 </ul>
 
+<h3>Art Installations</h3>
+
+<p>Public API Methods using HTTP GET</p>
+<ul>
+  <li>
+    List all art for 2011
+    <pre>{{ server }}/api/0.2/2011/art/</pre>
+    <a href="http://jsbin.com/opiyo4/202">jQuery Art Listings example</a> [<a href="http://jsbin.com/opiyo4/202/edit">source</a>]
+  </li>
+
+  <li>
+    Art with ID 1077
+    <pre>{{ server }}/api/0.2/2011/art/1077/</pre>
+    <a href="http://jsbin.com/enixe4">jQuery Art example</a> [<a href="http://jsbin.com/enixe4/edit">source</a>]
+  </li>
+</ul>
+
+<h3>Circular Streets</h3>
+
+<p>Public API Methods using HTTP GET</p>
+<ul>
+  <li>
+    List all circular streets for 2010
+    <pre>{{ server }}/api/0.2/2010/cstreet/</pre>
+    <a href="http://jsbin.com/ugekuj/2">jQuery Circular Streets example</a> [<a href="http://jsbin.com/ugekuj/2/edit">source</a>]
+  </li>
+</ul>
+
+<h3>Time Streets</h3>
+
+<p>Public API Methods using HTTP GET</p>
+<ul>
+  <li>
+    List all time streets for 2009
+    <pre>{{ server }}/api/0.2/2009/tstreet/</pre>
+    <a href="http://jsbin.com/erekas">jQuery Time Streets example</a> [<a href="http://jsbin.com/erekas/edit">source</a>]
+  </li>
+</ul>
+
+
+<h3>Authentication</h3>
+
+<p>Some API methods require authentication, because they are either returning sensitive data or they are altering data.  Each method that requires authentication is marked "Authentication required" above.</p>
+<p>Authentication is done via a simple &ldquo;signature"&rdquo;, which is then appended to the querystring of the API url.  We'll go into more detail below, but here is the basic scheme:</p>
+
+<ol>
+  <li>
+    Find the URL you want to sign.  For example, let's say you want to delete event #665.  The API url for the DELETE call would be <pre>{{ server }}/api/0.2/2011/event/665/</pre>
+  </li>
+  <li>
+    Strip off the domain name and any query arguments, so for this example we'd have <pre>/api/0.2/2011/event/665/</pre>
+  </li>
+  <li>
+    Get your API key.  You must be authorized to use API functions, which you can do by using the contact page on {{ server }}, once approved, you can get the API key from your profile page at {{ server }}{% url profiles_profile_my_detail %}
+  </li>
+  <li>
+    Make a random "seed" for signing.  The easiest "seed" is to simply take the timestamp of today, expressed as seconds.  Anything at all will be fine, but there are two caveats.  First, the seed can't ever be reused, and second, it needs to be less than 40 characters.
+  </li>
+  <li>
+    Add your username to the querystring.  For example, if my username was "example", the url to be signed would be: <pre>/api/0.2/2011/event/665/?user=example</pre>
+  </li>
+  <li>
+    Make a signature by taking an MD5 of the url, your seed, and your key, in that order. (code examples below)
+  </li>
+  <li>
+    Add the seed and your signature to the url.  For example, if your seed was "1302229284" and your MD5 signature was "5de4fce4f3135424be0a63db8f3ef20c", your final url would look like this: <pre>/api/0.2/2011/event/665/&amp;user=example&amp;seed=1302229284&amp;sig=5de4fce4f3135424be0a63db8f3ef20c</pre>
+  </li>
+  <li>
+    That's it. Call the url and if you are authorized, the action will be carried out. In our example, event #665 would be deleted. Note that it will only work once for that seed and signature.
+  </li>
+</ol>
+
+<h3>Authentication Code Examples</h3>
+
+<b>Python</b>
+
+<p>Python example code:</p>
+<pre><code>
+    import hashlib
+    import time
+    import types
+    import urllib
+    import urlparse
+
+    def _add_query_param(query, param, val):
+        """Add a querystring parameter to the url"""
+
+        last = '%s=%s' % (param, urllib.quote_plus(val))
+        if query:
+            return "%s&%s" % (query, last)
+        else:
+            return last
+
+    def _remove_query_param(query, param):
+        """Removes a query param, leaving the querystring in order"""
+        parts = query.split('&')
+        look = "%s=" % param
+        for ix in range(len(parts)-1, -1, -1):
+            if parts[ix].startswith(look):
+                del parts[ix]
+
+        return '&'.join(parts)
+
+    def _replace_query_param(query, param, val):
+        """Replaces a query param, leaving the querystring in order"""
+        parts = query.split('&')
+        look = "%s=" % param
+        for ix in range(0, len(parts)):
+            if parts[ix].startswith(look):
+                parts[ix] = "%s=%s" % (param, urllib.quote_plus(val))
+                break
+        return '&'.join(parts)
+
+    def sign_url(url, key, user=None, seed=None):
+        """Sign an url.
+
+        Args:
+            url: An url to sign.  It can have query parameters which will be preserved.
+                 If there is no "seed" provided as a keyword arg, it will look in the
+                 query params for it before finally simply giving up and using the
+                 current timestamp as the seed.
+
+            key: a key to sign with
+
+        Kwargs:
+            user: a user to sign with
+            seed: An explicit seed string to use for signing.
+
+        Returns:
+            The same url, with its signature added to the querystring.
+        """
+        origurl = url
+        parsed = urlparse.urlsplit(url)
+        query = parsed.query
+        qs = parse_qs(query)
+
+
+        if not seed:
+            # first look at query
+            if 'seed' in qs:
+                seed = qs['seed']
+                query = _remove_query_param(query,'seed')
+            else:
+                timestamp = datetime.datetime.now()
+                timestamp = time.mktime(timestamp.timetuple())
+                seed = str(int(timestamp))
+                log.debug('sign_url: no seed, using timestamp %s', seed)
+
+        if user is not None:
+            if 'user' in qs:
+                username = qs['user']
+                if type(username) is types.ListType:
+                    username = username[0]
+                if username != user.username:
+                    query = _replace_query_param(query, 'user', self.user.username)
+        else:
+            if 'user' in qs:
+                query = _remove_query_param(query, 'user')
+
+        url = urlparse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
+
+        processor = hashlib.md5(work)
+        processor.update(seed)
+        processor.update(key)
+        sig = processor.hexdigest()
+        query = _add_query_param(query, 'seed', seed)
+        query = _add_query_param(query, 'sig', sig)
+
+        url = urlparse.urlunsplit((parsed.scheme, parsed.netloc, parsed.path, query, parsed.fragment))
+        return url
+</code></pre>
+
+<h3>PHP</h3>
+
+<p>PHP Example code:</p>
+<pre><code>
+    /**
+     * Sign an url for use by the Events API
+     *
+     * @param string $apiurl the url fragment to sign, it should not contain the scheme or server
+     * @param string $key the user key
+     * @param string $user the user name for the key
+     * @param array $apiatts array of options with key=value
+     * @param array $urlinfo the url of the originial gallery link as parsed by parse_url
+     * @return string url
+     */
+    function gallery_sign_url($apiurl, $key, $user, &$apiatts, $urlinfo) {
+
+      $apiurl = str_replace('//', '/', $apiurl);
+      if (!empty($key) && !empty($user)) {
+        $apiatts[] = 'user=' . $user;
+        $apiurl .= '?' . implode('&',$apiatts);
+        $seed = time();
+        $n = rand(10e16, 10e20);
+        $seed .= base_convert($n, 10, 36);
+        $sig = md5($apiurl . $seed . $key);
+        $apiurl .= "&seed=$seed&sig=$sig";
+      }
+      elseif (count($apiatts) > 0) {
+        $apiurl .= '?' . implode('&',$apiatts);
+      }
+      $signed = $urlinfo['scheme'] . '://' . $urlinfo['host'];
+      if (!empty($urlinfo['port']) && $urlinfo['port'] <> 80) {
+        $signed .= ':' . $urlinfo['port'];
+      }
+      $signed .= $apiurl;
+      return $signed;
+    }
+</code></pre>
+
 <h3>Legal</h3>
-© 2011 Black Rock City LLC, all rights reserved. Use of all event information and data restricted to free use. These materials are not to be used or distributed in any form which may be sold for profit.
+&copy; 2009-2011 Black Rock City LLC, all rights reserved. Use of all event information and data restricted to free use. These materials are not to be used or distributed in any form which may be sold for profit.
 </div>
 {% endblock %}
