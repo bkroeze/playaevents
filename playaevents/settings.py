@@ -87,10 +87,20 @@ TEMPLATE_DIRS = (
     os.path.join(PARENT_DIRNAME, "templates"),
 )
 
+CACHE_LOCATION = os.path.join(PARENT_DIRNAME, 'cache')
+if not os.path.exists(CACHE_LOCATION):
+    os.mkdir(CACHE_LOCATION)
+
+CACHES = {
+    'default' : {
+        'BACKEND' : 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION' : CACHE_LOCATION,
+        'TIMEOUT' : 60*60*6 # 6 hours
+        }
+    }
+
 CACHE_PREFIX = 'F'
-#CACHE_TIMEOUT = 0
-CACHE_TIMEOUT = 60*60
-CACHE_BACKEND = "memcached://127.0.0.1:11211/"
+CACHE_TIMEOUT = 60*60*24
 
 DEBUG_TOOLBAR_CONFIG = { 'INTERCEPT_REDIRECTS': False }
 

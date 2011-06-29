@@ -9,6 +9,7 @@ settings_local.py
 media
 static
 parts
+cache
 pip-log.txt
 var
 .installed.cfg

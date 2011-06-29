@@ -49,11 +49,15 @@ class BaseArtHandler(object):
     def read(self, request, year_year=None, art_id=None):
         base = ArtInstallation.objects.filter()
         if(year_year):
-            year = Year.objects.get(year=year_year)
+            try:
+                year = Year.objects.get(year=year_year)
+            except Year.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Year not found #%s' % year_year)
+
             if art_id:
-                art = ArtInstallation.objects.filter(year=year,id=art_id)
+                art = base.filter(year=year,id=art_id)
             else:
-                art = ArtInstallation.objects.filter(year=year)
+                art = base.filter(year=year)
             return art
         else:
             return base.all()
@@ -81,10 +85,13 @@ class BasePlayaEventHandler(object):
     fields = event_fields
 
     def read(self, request, year_year=None, playa_event_id=None):
-        base = PlayaEvent.objects.filter(moderation='A', list_online=True)
         if(year_year):
-            year = Year.objects.get(year=year_year)
-            if(playa_event_id):
+            try:
+                year = Year.objects.get(year=year_year)
+            except Year.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Year not found #%s' % year_year)
+
+            if playa_event_id:
                 events = PlayaEvent.objects.filter(year=year,id=playa_event_id, list_online=True)
             else:
                 if(request.GET.get('start_time') and request.GET.get('end_time')):
@@ -97,10 +104,10 @@ class BasePlayaEventHandler(object):
                     event_list = Occurrence.objects.filter(end_time__lte=request.GET.get('end_time')).values_list('event', flat=True)
                     events = PlayaEvent.objects.filter(id__in=event_list)
                 else:
-                        events = PlayaEvent.objects.filter(year=year, moderation='A', list_online=True)
+                    events = PlayaEvent.objects.get_and_cache(year=year, moderation='A', list_online=True)
             return events
         else:
-            return base.all()
+            return PlayaEvent.objects.get_and_cache(moderation='A', list_online=True)
 
 
 class AnonymousPlayaEventHandler(BasePlayaEventHandler, AnonymousBaseHandler):
@@ -266,16 +273,19 @@ class BaseThemeCampHandler(object):
     fields = camp_fields
 
     def read(self, request, year_year=None, camp_id=None):
-        base = ThemeCamp.objects.filter(list_online=True)
         if(year_year):
-            year = Year.objects.get(year=year_year)
+            try:
+                year = Year.objects.get(year=year_year)
+            except Year.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Year not found #%s' % year_year)
+
             if(camp_id):
                 camp = ThemeCamp.objects.filter(year=year,id=camp_id,list_online=True)
             else:
-                camp = ThemeCamp.objects.filter(year=year,list_online=True)
+                camp = ThemeCamp.objects.get_and_cache(year=year,list_online=True)
             return camp
         else:
-            return base.all()
+            return ThemeCamp.objects.get_and_cache(list_online=True)
 
 class AnonymousThemeCampHandler(BaseThemeCampHandler, AnonymousBaseHandler):
     allow_methods = ('GET',)
@@ -425,7 +435,11 @@ class AnonymousCircularStreetHandler(AnonymousBaseHandler):
     def read(self, request, year_year=None):
         base = CircularStreet.objects.filter()
         if(year_year):
-            year = Year.objects.get(year=year_year)
+            try:
+                year = Year.objects.get(year=year_year)
+            except Year.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Year not found #%s' % year_year)
+
             cstreet = CircularStreet.objects.filter(year=year)
             return cstreet
         else:
@@ -445,7 +459,11 @@ class AnonymousTimeStreetHandler(AnonymousBaseHandler):
     def read(self, request, year_year=None):
         base = TimeStreet.objects.filter()
         if(year_year):
-            year = Year.objects.get(year=year_year)
+            try:
+                year = Year.objects.get(year=year_year)
+            except Year.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Year not found #%s' % year_year)
+
             tstreet = TimeStreet.objects.filter(year=year)
             return tstreet
         else:

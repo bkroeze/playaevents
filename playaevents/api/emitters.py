@@ -17,12 +17,16 @@ from django.db.models import Model, permalink
 
 from django.utils.encoding import smart_unicode
 from django.http import HttpResponse
+from keyedcache import cache_set, cache_get, cache_key, NotCachedError
 
 try:
     import simplejson
 except ImportError:
     from django.utils import simplejson
 
+import logging
+
+log = logging.getLogger('playaevents.api.emitters')
 
 class TimeAwareJSONEmitter(JSONEmitter):
     """
@@ -216,13 +220,30 @@ class TimeAwareJSONEmitter(JSONEmitter):
             """
             Lists.
             """
-            return [ _any(v) for v in data ]
+
+            key = cache_key('json', data)
+            try:
+                ret = cache_get(key)
+                log.debug('got json serialized list from cache for %s', key)
+            except NotCachedError:
+                ret = [ _any(v) for v in data ]
+                log.debug('setting json serialized list to cache for %s', key)
+                cache_set(key, value=ret)
+            return ret
 
         def _dict(data):
             """
             Dictionaries.
             """
-            return dict([ (k, _any(v)) for k, v in data.iteritems() ])
+            key = cache_key('json', data)
+            try:
+                ret = cache_get(key)
+                log.debug('got json serialized data from cache for %s', key)
+            except NotCachedError:
+                ret = dict([ (k, _any(v)) for k, v in data.iteritems() ])
+                log.debug('setting json serialized data to cache for %s', key)
+                cache_set(key, value=ret)
+            return ret
 
         # Kickstart the seralizin'.
         return _any(self.data, self.fields)

@@ -220,8 +220,10 @@ class PlayaEventForm(forms.ModelForm):
             # set the start and end time based on the first occurrence (all
             # should be the same date time).  If they aren't, they will be
             # after we're done editing
-            self.initial.setdefault('start_time', occurrences[0].start_time)
-            self.initial.setdefault('end_time', occurrences[0].end_time)
+            if len(occurrences) > 0:
+                self.initial.setdefault('start_time', occurrences[0].start_time)
+                self.initial.setdefault('end_time', occurrences[0].end_time)
+
             # Set the initial form values properly for recurring events
             if len(occurrences) > 1:
                 self.initial.setdefault('repeats', True)

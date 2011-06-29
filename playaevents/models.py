@@ -2,6 +2,9 @@ from django.db import models
 from django.contrib.auth.models import User
 from swingtime.models import Event
 from datetime import timedelta
+from keyedcache import NotCachedError, cache_get, cache_set, cache_key
+import logging
+log = logging.getLogger(__file__)
 
 MODERATION_CHOICES = (
 	('U', 'UnModerated'),
@@ -67,6 +70,24 @@ class ThemeCampManager(models.Manager):
     def get_query_set(self):
         return super(ThemeCampManager, self).get_query_set().filter(list_online=True)
 
+    def get_and_cache(self, **kwargs):
+        key = cache_key('ThemeCamp', 'all', **kwargs)
+        log.debug('key = %s', key)
+        try:
+            results = cache_get(key)
+            log.debug('got all camps from cache')
+        except NotCachedError:
+            log.debug('getting camps from db')
+            if kwargs:
+                results = self.filter(**kwargs)
+            else:
+                results = self.all()
+
+            results = list(results)
+            cache_set(key, value=results, length=60*60*24) # set for one day
+
+        return results
+
 
 class ThemeCamp(models.Model):
     name = models.CharField(max_length=100)
@@ -130,6 +151,24 @@ class ArtInstallation(models.Model):
             'year_year':self.year.year,
         })
 
+class PlayaEventManager(models.Manager):
+    def get_and_cache(self, **kwargs):
+        key = cache_key('PlayaEvent', 'all', **kwargs)
+        try:
+            results = cache_get(key)
+            log.debug('got all events from cache')
+        except NotCachedError:
+            log.debug('getting events from db')
+            if kwargs:
+                results = self.filter(**kwargs)
+            else:
+                results = self.all()
+
+            results = list(results)
+            cache_set(key, value=results, length=60*60*24) # set for one day
+
+        return results
+
 
 class PlayaEvent(Event):
   year = models.ForeignKey(Year)
@@ -149,6 +188,8 @@ class PlayaEvent(Event):
   speaker_series = models.NullBooleanField(default=False)
   password_hint = models.CharField(max_length=120, blank=True, null=True)
   password = models.CharField(max_length=40, blank=True, null=True)
+
+  objects = PlayaEventManager()
 
   def __unicode__(self):
     return self.year.year + ":" + self.title

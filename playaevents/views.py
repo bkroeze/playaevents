@@ -115,8 +115,8 @@ def themecamps(request, year_year):
                                   context_instance=RequestContext(request))
 
 def themecampid(request, year_year, theme_camp_id):
-    year = Year.objects.get(year=year_year)
-    camp = ThemeCamp.objects.get(id=theme_camp_id)
+    year = get_object_or_404(Year, year=year_year)
+    camp = get_object_or_404(ThemeCamp, id=theme_camp_id)
     events = PlayaEvent.objects.filter(hosted_by_camp=camp, moderation='A')
     map = ''
     return render_to_response('playaevents/themecamp.html',
@@ -127,7 +127,7 @@ def themecampid(request, year_year, theme_camp_id):
                               context_instance=RequestContext(request))
 
 def themecampuuid(request, theme_camp_id):
-    camp = ThemeCamp.objects.get(id=theme_camp_id)
+    camp = get_object_or_404(ThemeCamp, id=theme_camp_id)
     year = camp.year
     events = PlayaEvent.objects.filter(hosted_by_camp=camp, moderation='A')
     map = ''
@@ -139,12 +139,12 @@ def themecampuuid(request, theme_camp_id):
                               context_instance=RequestContext(request))
 
 def themecampname(request, year_year, theme_camp_name):
-    xyear = Year.objects.filter(year=year_year)
+    year = get_object_or_404(Year, year=year_year)
     theme_camp_name = theme_camp_name.replace('-',' ')
-    camp = ThemeCamp.objects.filter(year=xyear[0],name__iexact=theme_camp_name)[0]
+    camp = ThemeCamp.objects.filter(year=year,name__iexact=theme_camp_name)[0]
     events = PlayaEvent.objects.filter(hosted_by_camp=camp)
     return render_to_response('playaevents/themecamp.html',
-                              {'year': xyear[0],
+                              {'year': year,
                                'theme_camp': camp,
                                'events':events},
                               context_instance=RequestContext(request))
@@ -156,7 +156,8 @@ def playa_events_home(request,
     template='playaevents/playa_events_home.html',
     queryset=None):
 
-    year = Year.objects.get(year=year_year)
+    year = get_object_or_404(Year, year=year_year)
+
     user=request.user
     if user and type(user) != AnonymousUser:
         my_events = PlayaEvent.objects.filter(year=year, creator=user)
@@ -173,7 +174,7 @@ def all_playa_events(request,
     template='playaevents/all_playa_events.html',
     queryset=None):
 
-    year = Year.objects.get(year=year_year)
+    year = get_object_or_404(Year, year=year_year)
     previous = int(year.year) -1
     next = int(year.year) + 1
 
@@ -330,6 +331,7 @@ def playa_event_view(request,
     '''
 
     event = get_object_or_404(PlayaEvent, pk=playa_event_id)
+    year = get_object_or_404(Year, year=year_year)
 
     # event_form = recurrence_form = None
     # if request.method == 'POST':
@@ -354,7 +356,7 @@ def playa_event_view(request,
         playa_event=event,
         event_form=event_form_class,
         recurrence_form=recurrence_form_class,
-        year = get_object_or_404(Year, year=year_year))
+        year = year)
 
     return render_to_response(template, data,
         context_instance=RequestContext(request))
