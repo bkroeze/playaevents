@@ -45,9 +45,20 @@ a img {
 
 #account-info {
 	float: right;
-	margin: 20px 90px 0 0;
+	margin: 1px 90px 0 0;
 	text-align: right;
 	line-height: 1.5em;
+}
+
+#searchform input.inputtext {
+    height: 18px;
+    width: 80px;
+    font-size: 11px;
+    vertical-align: middle;
+}
+
+#searchform input.inputimage {
+    vertical-align: middle;
 }
 
 #pe-header {

@@ -190,6 +190,21 @@ urlpatterns = patterns(
         {'year_year' : curryear},
         name="playa_occurrence_add_thisyear"),
 
+    url(r'(?P<year_year>\d{4})/playa_event/search/',
+        'playaevents.views.playa_event_search',
+        name='playa_event_search'),
+
+    url(r'^playa_event/search/',
+        'playaevents.views.playa_event_search',
+        {'year_year' : curryear},
+        name='playa_event_search_thisyear'),
+
+    url(r'^all/playa_event/search/',
+        'playaevents.views.playa_event_search',
+        {'year_year' : 'all'},
+        name='playa_event_search_all'),
+
+
     url(r'^swingtime/', include('swingtime.urls')),
 )
 

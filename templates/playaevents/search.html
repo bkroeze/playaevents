@@ -1,0 +1,48 @@
+{% extends "playaevents/base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% blocktrans %}Search Results{% endblocktrans %}{% endblock %}
+
+{% block body %}
+<h1>
+  Playa Events Search Results for {% if year %}{{ year.year }}{% else %}All Years{% endif %}
+</h1>
+<p><i>Searched for &ldquo;{{ searchtext }}&rdquo;{% if year %}<a href="{% url playa_event_search_all %}?search={{ searchtext_q }}">(widen search to all years)</a>{% endif %}</i></p>
+<hr />
+
+{% if events %}
+  <table width='100%' border='0'>
+  <thead border='0'>
+    <tr>
+      <th>Day</th>
+      <th>Title</th>
+      <th>Start</th>
+      <th>End</th>
+    </tr>
+  </thead>
+  <tbody border='0'>
+    {% for dt, occurrences in events %}
+      {% for o in occurrences %}
+        <tr>
+          {% if forloop.first %}
+            <th valign='top' rowspan="{{ occurrences|length }}">{{ dt|date:"l - M jS Y"}}</th>
+          {% endif %}
+          <td>
+            <a href="{% url playa_event_view o.event.playaevent.id %}">{{ o.title}}</a>
+          </td>
+          {% if o.event.playaevent.all_day %}
+            <td colspan='2'>All Day</td>
+          {% else %}
+	    <td>{{ o.start_time|date:"P" }}</td>
+            <td>{{ o.end_time|date:"P" }}</td>
+          {% endif %}
+        </tr>
+        {% endfor %}
+     {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p>Nothing found</p>
+{% endif %}
+{% endblock %}

@@ -169,6 +169,19 @@ class PlayaEventManager(models.Manager):
 
         return results
 
+    def search(self, searchtext, year=None):
+        """Performs a full-text search on PlayaEvent and Event, returning the queryset."""
+
+        if year and year != 'all':
+            sql = "select pe.* from playaevents_playaevent pe inner join swingtime_event se on (se.id = pe.event_ptr_id) inner join playaevents_year y on (pe.year_id = y.id) where (se.search_tsv @@ plainto_tsquery(%s) or pe.search_tsv @@ plainto_tsquery(%s)) and y.year=%s and pe.moderation='A' and pe.list_online='t'"
+            params = (searchtext, searchtext, year)
+        else:
+            sql = "select pe.* from playaevents_playaevent pe inner join swingtime_event se on (se.id = pe.event_ptr_id) where (se.search_tsv @@ plainto_tsquery(%s) or pe.search_tsv @@ plainto_tsquery(%s)) and pe.moderation='A' and pe.list_online='t'"
+            params = (searchtext, searchtext)
+
+        log.debug('search sql=%s, params=%s', sql, params)
+        return self.raw(sql, params=params)
+
 
 class PlayaEvent(Event):
   year = models.ForeignKey(Year)

@@ -6,9 +6,10 @@ from datetime import datetime, time
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
 from django.core import urlresolvers
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, Http404
 from django.shortcuts import get_object_or_404, render_to_response
 from django.template import RequestContext, loader
+from django.utils.http import urlquote_plus
 from django.views.generic.create_update import delete_object
 from playaevents import forms as playaforms
 from playaevents import export
@@ -311,6 +312,49 @@ def playa_events_by_day(request,
         template,
         data,
         context_instance=RequestContext(request))
+
+def playa_event_search(request, year_year):
+
+    if year_year is not None:
+        if year_year == 'all':
+            log.debug('searching all years')
+            year = None
+        else:
+            year_year = str(year_year)
+            log.debug('year = %s', year_year)
+            year = get_object_or_404(Year, year=year_year)
+    else:
+        year = get_current_year()
+
+    searchtext = request.GET.get('search', None)
+    if searchtext is None:
+        raise Http404('No search text sent')
+
+    events = PlayaEvent.objects.search(searchtext, year=year_year)
+    ids = [event.pk for event in events]
+    ids = tuple(ids)
+    filters = { 'event__id__in' : ids }
+
+    if year is not None:
+        filters['start_time__range'] = (year.event_start, year.event_end)
+
+    occurrences = Occurrence.objects.select_related().filter(
+        **filters).order_by('start_time')
+
+    occ = [(dt, list(items))
+              for dt, items in
+              itertools.groupby(occurrences, lambda o: o.start_time.date())]
+
+
+    ctx = RequestContext(
+        request,
+        {
+            'searchtext' : searchtext,
+            'searchtext_q' : urlquote_plus(searchtext),
+            'year' : year,
+            'events' : occ,
+         })
+    return render_to_response('playaevents/search.html', ctx)
 
 def playa_event_view(request,
     year_year,
