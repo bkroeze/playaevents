@@ -98,7 +98,7 @@ class ThemeCamp(models.Model):
     contact_email = models.EmailField(null=True,blank=True)
     hometown = models.CharField(max_length=50, null=True, blank=True)
     image = models.ImageField(upload_to='theme_camp', null=True, blank=True)
-    location_string = models.CharField(max_length=50, null=True, blank=True)
+    location_string = models.CharField(max_length=250, null=True, blank=True)
     list_online = models.NullBooleanField(null=False, blank=False, default=True)
     circular_street = models.ForeignKey(CircularStreet, null=True, blank=True)
     time_address = models.TimeField(null=True, blank=True)
@@ -121,7 +121,6 @@ class ThemeCamp(models.Model):
             'theme_camp_id':self.id,
             'year_year':self.year.year,
         })
-
 
 class ArtInstallation(models.Model):
     year = models.ForeignKey(Year)

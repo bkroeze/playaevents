@@ -17,11 +17,11 @@ def _tf(val):
         return False
     return val
 
-def csv_onetime_events(year_year, buf = None):
+def csv_onetime_events(year_year, buf = None, count=1652):
     year= Year.objects.filter(year=year_year)
 
     events = PlayaEvent.objects.filter(
-        year=year, moderation='A').order_by('id').annotate(num_occurrences=Count('occurrence'))[:980]
+        year=year, moderation='A').order_by('id').annotate(num_occurrences=Count('occurrence'))[:count]
 
     timed_events= itertools.ifilter(lambda e: e.all_day==False, events)
 
@@ -60,8 +60,8 @@ def csv_onetime_events(year_year, buf = None):
         print_description = _map_to_ascii(e.print_description)
         placement_location = ''
         if e.check_location:
-            location = 'Check @ Play Info'
-            placement_location = 'Check @ Playa Info'
+            location = 'See Playa Info Directory'
+            placement_location = 'See Playa Info Directory'
         if e.other_location:
             location = e.other_location
         elif e.located_at_art:
@@ -71,6 +71,15 @@ def csv_onetime_events(year_year, buf = None):
             location = e.hosted_by_camp.name
             placement_location = e.hosted_by_camp.location_string
         event_type = e.event_type
+
+        location = _map_to_ascii(location)
+        if placement_location:
+            try:
+                placement_location = _map_to_ascii(placement_location)
+            except:
+                pass
+        else:
+            placement_location = ''
 
         speaker = _tf(e.speaker_series)
 
@@ -88,11 +97,11 @@ def csv_onetime_events(year_year, buf = None):
 
     return buf
 
-def csv_repeating_events(year_year, buf = None):
+def csv_repeating_events(year_year, buf = None, count=1650):
 
     year = Year.objects.filter(year=year_year)
     events = PlayaEvent.objects.filter(
-        year=year, moderation='A').order_by('id').annotate(num_occurrences=Count('occurrence'))[:980]
+        year=year, moderation='A').order_by('id').annotate(num_occurrences=Count('occurrence'))[:count]
 
     timed_events= itertools.ifilter(lambda e: e.all_day==False, events)
 
@@ -124,8 +133,8 @@ def csv_repeating_events(year_year, buf = None):
         print_description = _map_to_ascii(e.print_description)
         placement_location = ''
         if e.check_location:
-            location = 'Check @ Play Info'
-            placement_location = 'Check @ Playa Info'
+            location = 'See Playa Info Directory'
+            placement_location = 'See Playa Info Directory'
         if e.other_location:
             location = e.other_location
         elif e.located_at_art:
@@ -136,6 +145,16 @@ def csv_repeating_events(year_year, buf = None):
             placement_location = e.hosted_by_camp.location_string
         event_type = e.event_type
         speaker = _tf(e.speaker_series)
+        location = _map_to_ascii(location)
+
+        if placement_location:
+            try:
+                placement_location = _map_to_ascii(placement_location)
+            except:
+                pass
+        else:
+            placement_location = ''
+
         for o in occurrences:
             start_date = o.start_time.strftime('%A')
             if o.start_time.day == 7:
@@ -145,7 +164,6 @@ def csv_repeating_events(year_year, buf = None):
             if o.end_time.day == 7:
                 end_date = 'Lastday'
             end_time = o.end_time.strftime('%H:%M')
-
 
             writer.writerow(
                 [title,
@@ -169,9 +187,9 @@ def csv_repeating_events(year_year, buf = None):
 
     return buf
 
-def csv_all_day_onetime_events(year_year, buf=None):
+def csv_all_day_onetime_events(year_year, buf=None, count=1650):
     year= Year.objects.filter(year=year_year)
-    events = PlayaEvent.objects.filter(year=year, moderation='A').order_by('id').annotate(num_occurrences=Count('occurrence'))[:980]
+    events = PlayaEvent.objects.filter(year=year, moderation='A').order_by('id').annotate(num_occurrences=Count('occurrence'))[:1650]
     all_day_events= itertools.ifilter(lambda e: e.all_day==True, events)
 
     onetime_all_day_events = list(itertools.ifilter(lambda e: e.num_occurrences==1, all_day_events))
@@ -199,8 +217,8 @@ def csv_all_day_onetime_events(year_year, buf=None):
         print_description = _map_to_ascii(e.print_description)
         placement_location = ''
         if e.check_location:
-            location = 'Check @ Play Info'
-            placement_location = 'Check @ Playa Info'
+            location = 'See Playa Info Directory'
+            placement_location = 'See Playa Info Directory'
         if e.other_location:
             location = e.other_location
         elif e.located_at_art:
@@ -211,6 +229,8 @@ def csv_all_day_onetime_events(year_year, buf=None):
             placement_location = e.hosted_by_camp.location_string
         event_type = e.event_type
         speaker = _tf(e.speaker_series)
+        location = _map_to_ascii(location)
+
         for o in occurrences:
             start_date = o.start_time.strftime('%A')
             if o.start_time.day == 7:
@@ -234,10 +254,10 @@ def csv_all_day_onetime_events(year_year, buf=None):
 
     return buf
 
-def csv_all_day_repeating_events(year_year, buf = None):
+def csv_all_day_repeating_events(year_year, buf = None, count=1650):
     year= Year.objects.filter(year=year_year)
     events = PlayaEvent.objects.filter(
-        year=year, moderation='A').order_by('id').annotate(num_occurrences=Count('occurrence'))
+        year=year, moderation='A').order_by('id').annotate(num_occurrences=Count('occurrence'))[:count]
 
     all_day_events= itertools.ifilter(lambda e: e.all_day==True, events)
 
@@ -266,8 +286,8 @@ def csv_all_day_repeating_events(year_year, buf = None):
         print_description = _map_to_ascii(e.print_description)
         placement_location = ''
         if e.check_location:
-            location = 'Check @ Play Info'
-            placement_location = 'Check @ Playa Info'
+            location = 'See Playa Info Directory'
+            placement_location = 'See Playa Info Directory'
         if e.other_location:
             location = e.other_location
         elif e.located_at_art:
@@ -278,6 +298,15 @@ def csv_all_day_repeating_events(year_year, buf = None):
             placement_location = e.hosted_by_camp.location_string
         event_type = e.event_type
         speaker = _tf(e.speaker_series)
+        location = _map_to_ascii(location)
+
+        if placement_location:
+            try:
+                placement_location = _map_to_ascii(placement_location)
+            except:
+                pass
+        else:
+            placement_location = ''
 
         for o in occurrences:
             start_date = o.start_time.strftime('%A')

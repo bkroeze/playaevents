@@ -72,12 +72,106 @@ class AnonymousArtInstallationHandler(BaseArtHandler, AnonymousBaseHandler):
 
 
 class ArtInstallationHandler(BaseArtHandler, BaseHandler):
-    allow_methods = ('GET',)
+    allow_methods = ('GET','PUT','POST')
     anonymous = AnonymousArtInstallationHandler
 
     def read(self, request, year_year=None, art_id=None):
         log.debug('ArtInstallationHandler GET')
         return super(ArtInstallationHandler, self).read(request, year_year=year_year, art_id=art_id)
+
+    def _create_or_update(self, request, year_year=None, art_id=None):
+        user = request.user
+        if not user.get_profile().api_allowed:
+            return rc_response(request, rc.BAD_REQUEST, 'User not permitted to use the API')
+
+        method = request.method
+
+        if method == "PUT":
+            data = request.PUT.copy()
+        elif method == "POST":
+            data = request.POST.copy()
+        else:
+            return rc_response(request, rc.BAD_REQUEST, 'Bad request method: %s' % method)
+
+        if year_year and 'year' not in data:
+            data['year'] = year_year
+
+        if not (data and user):
+            log.debug('Bad request: data=%s, user=%s', data, user)
+            return rc_response(request, rc.BAD_REQUEST, 'Missing critical information')
+
+        log.debug('data for create_or_update: %s', data)
+
+        obj = None
+
+        if art_id:
+            try:
+                obj = ArtInstallation.objects.get(pk=art_id)
+                log.debug('got art #%i for update', obj.id)
+
+            except ArtInstallation.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'ArtInstallation not found #%s' % art_id)
+
+            # no updating the year!
+            if 'year' in data:
+                del data['year']
+
+        elif 'bm_fm_id' in data:
+            log.debug('trying to get art installation from DB: bm_fm_id = %s', data['bm_fm_id'])
+            try:
+                obj = ArtInstallation.objects.get(bm_fm_id=int(data['bm_fm_id']))
+            except ArtInstallation.DoesNotExist:
+                pass
+
+        if obj is None:
+            log.debug('creating new ArtInstallation')
+            obj = ArtInstallation()
+
+        # get rid of illegal-to-update attributes
+        for key in ('id','pk'):
+            if key in data:
+                del data[key]
+
+        # now loop through the data, updating as needed
+        if 'year' in data:
+            try:
+                year = Year.objects.get(year=data['year'])
+            except Year.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such year: %s' % data['year'])
+
+            obj.year = year
+
+        # text fields
+        for key in ('description', 'name', 'artist', 'contact_email', 'url', 'slug', 'time_address', 'distance'):
+            if key in data:
+                val = data[key]
+                log.debug('setting %s=%s', key, val)
+                setattr(obj, key, val)
+
+        #bm_fm_id
+        if 'bm_fm_id' in data:
+            obj.bm_fm_id = int(data['bm_fm_id'])
+
+        obj.save()
+
+        if method == 'PUT':
+            response = rc.ALL_OK
+
+        else:
+            response = rc.CREATED
+
+        response.content = json.dumps({'pk' : obj.id})
+        return response
+
+    def create(self, request, year_year=None, art_id=None):
+        log.debug('ArtInstallationHandler CREATE: %s %s', year_year, art_id)
+        ret = self._create_or_update(request, year_year=year_year, art_id=art_id)
+        log.debug('create done')
+        return ret
+
+    def update(self, request, year_year=None, art_id=None):
+        log.debug('ArtInstallationHandler UPDATE: %s %s', year_year, art_id)
+        return self._create_or_update(request, year_year=year_year, art_id=art_id)
 
 
 class BasePlayaEventHandler(object):
@@ -322,6 +416,8 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
 
         log.debug('data for create_or_update: %s', data)
 
+        obj = None
+
         if camp_id:
             try:
                 obj = ThemeCamp.objects.get(pk=camp_id)
@@ -334,13 +430,20 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
             if 'year' in data:
                 del data['year']
 
-        else:
+        elif 'bm_fm_id' in data:
+            log.debug('trying to get ThemeCamp from DB: bm_fm_id = %s', data['bm_fm_id'])
+            try:
+                obj = ThemeCamp.objects.get(bm_fm_id=int(data['bm_fm_id']))
+            except ThemeCamp.DoesNotExist:
+                pass
+
+        if obj is None:
             log.debug('creating new event')
             obj = ThemeCamp()
             obj.creator = user
 
         # get rid of illegal-to-update attributes
-        for key in ('id','pk','bm_fm_id','deleted'):
+        for key in ('id','pk','deleted'):
             if key in data:
                 del data[key]
 
@@ -360,11 +463,26 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
                 obj.circular_street = street
             except CircularStreet.DoesNotExist:
                 return rc_response(request, rc.NOT_HERE, 'No such CircularStreet: %s' % key)
+        elif 'circular_street_name' in data:
+            key = data['circular_street_name']
+            try:
+                street = CircularStreet.objects.get(name__istartswith=key[0:2], year=obj.year)
+                obj.circular_street = street
+            except CircularStreet.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such CircularStreet: %s' % key)
+
 
         if 'time_street' in data:
             key = data['time_street']
             try:
                 street = TimeStreet.objects.get(pk=key)
+                obj.time_street = street
+            except TimeStreet.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'No such TimeStreet: %s' % key)
+        elif 'time_street_name' in data:
+            key = data['time_street_name']
+            try:
+                street = TimeStreet.objects.get(name=key, year=obj.year)
                 obj.time_street = street
             except TimeStreet.DoesNotExist:
                 return rc_response(request, rc.NOT_HERE, 'No such TimeStreet: %s' % key)
