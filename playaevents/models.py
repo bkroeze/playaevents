@@ -67,6 +67,8 @@ class TimeStreet(models.Model):
 
 
 class ThemeCampManager(models.Manager):
+    """Manager which filters out list_online=False"""
+
     def get_query_set(self):
         return super(ThemeCampManager, self).get_query_set().filter(list_online=True)
 
@@ -88,6 +90,26 @@ class ThemeCampManager(models.Manager):
 
         return results
 
+class ThemeCampAllManager(models.Manager):
+    """Manager which does not filter out list_online=False"""
+
+    def get_and_cache(self, **kwargs):
+        key = cache_key('ThemeCampAll', 'all', **kwargs)
+        log.debug('key = %s', key)
+        try:
+            results = cache_get(key)
+            log.debug('got all camps from cache')
+        except NotCachedError:
+            log.debug('getting camps from db')
+            if kwargs:
+                results = self.filter(**kwargs)
+            else:
+                results = self.all()
+
+            results = list(results)
+            cache_set(key, value=results, length=60*60*24) # set for one day
+
+        return results
 
 class ThemeCamp(models.Model):
     name = models.CharField(max_length=100)
@@ -106,7 +128,7 @@ class ThemeCamp(models.Model):
     deleted = models.NullBooleanField(null=True, blank=True, default=False)
 
     # make the default "objects" return just public results
-    all_objects = models.Manager()
+    all_objects = ThemeCampAllManager()
     objects = ThemeCampManager()
 
     class Meta:

@@ -21,7 +21,8 @@ Emitter.register('json', TimeAwareJSONEmitter, content_type='text/javascript; ch
 
 art_fields = ('id', 'name', ('year', ('id','year')),
               'slug', 'artist', 'description', 'url',
-              'contact_email', 'circular_street', 'time_address')
+              'contact_email', 'circular_street', 'time_address',
+              'distance', 'location_string')
 event_fields = ('id', 'title','description',
                 'print_description', ('year', ('id','year')),
                 'slug', 'event_type', ('hosted_by_camp', ('id','name')),
@@ -29,11 +30,20 @@ event_fields = ('id', 'title','description',
                 'other_location', 'check_location',
                 'url', 'all_day',
                 ('occurrence_set', ('start_time', 'end_time')))
+event_full_fields = event_fields + (
+                'contact_email',
+                'password_hint',
+                'password',
+                'moderation',
+                'list_online',
+                'list_contact_online',
+                'speaker_series')
 camp_fields = ('id', ('year', ('id','year')),
-               'name', 'description', 'type',
-               'start_date_time', 'end_date_time',
-               'duration', 'repeats', 'hosted_by_camp',
-               'located_at_art', 'url', 'contact_email')
+               'name', 'description', 'url', 'contact_email')
+camp_full_fields = camp_fields + (
+               'location_string',
+               ('circular_street', ('name',)),
+               'time_address')
 cstreet_fields = ('id', ('year', ('id','year')),
                   'name', 'order', 'width',
                   'distance_from_center')
@@ -176,35 +186,53 @@ class ArtInstallationHandler(BaseArtHandler, BaseHandler):
 
 class BasePlayaEventHandler(object):
     model = PlayaEvent
-    fields = event_fields
 
-    def read(self, request, year_year=None, playa_event_id=None):
+    def read(self, request, year_year=None, playa_event_id=None, online_only = True):
         if(year_year):
             try:
                 year = Year.objects.get(year=year_year)
             except Year.DoesNotExist:
                 return rc_response(request, rc.NOT_HERE, 'Year not found #%s' % year_year)
 
+            kw = {}
+            if online_only:
+                kw['list_online'] = True
+
             if playa_event_id:
-                events = PlayaEvent.objects.filter(year=year,id=playa_event_id, list_online=True)
+                kw['year'] = year
+                kw['id'] = playa_event_id
+                events = PlayaEvent.objects.filter(*kw)
+
             else:
                 if(request.GET.get('start_time') and request.GET.get('end_time')):
                     event_list = Occurrence.objects.filter(start_time__gte=request.GET.get('start_time'), end_time__lte=request.GET.get('end_time')).values_list('event', flat=True)
-                    events = PlayaEvent.objects.filter(id__in=event_list)
+
+                    kw['id__in'] = event_list
+                    events = PlayaEvent.objects.filter(**kw)
+
                 elif(request.GET.get('start_time')):
                     event_list = Occurrence.objects.filter(start_time__gte=request.GET.get('start_time')).values_list('event', flat=True)
-                    events = PlayaEvent.objects.filter(id__in=event_list)
+
+                    kw['id__in'] = event_list
+                    events = PlayaEvent.objects.filter(**kw)
+
                 elif(request.GET.get('end_time')):
                     event_list = Occurrence.objects.filter(end_time__lte=request.GET.get('end_time')).values_list('event', flat=True)
-                    events = PlayaEvent.objects.filter(id__in=event_list)
+
+                    kw['id__in'] = event_list
+                    events = PlayaEvent.objects.filter(**kw)
                 else:
-                    events = PlayaEvent.objects.get_and_cache(year=year, moderation='A', list_online=True)
+                    kw['year'] = year
+                    kw['moderation'] = 'A'
+                    events = PlayaEvent.objects.get_and_cache(**kw)
+
             return events
         else:
             return PlayaEvent.objects.get_and_cache(moderation='A', list_online=True)
 
 
 class AnonymousPlayaEventHandler(BasePlayaEventHandler, AnonymousBaseHandler):
+    fields = event_fields
     allow_methods = ('GET',)
 
     def read(self, request, year_year=None, playa_event_id=None):
@@ -212,6 +240,7 @@ class AnonymousPlayaEventHandler(BasePlayaEventHandler, AnonymousBaseHandler):
         return super(AnonymousPlayaEventHandler, self).read(request, year_year=year_year, playa_event_id=playa_event_id)
 
 class PlayaEventHandler(BasePlayaEventHandler, BaseHandler):
+    fields = event_full_fields
     allow_methods = ('GET', 'DELETE', 'PUT', 'POST')
     anonymous = AnonymousPlayaEventHandler
 
@@ -331,7 +360,10 @@ class PlayaEventHandler(BasePlayaEventHandler, BaseHandler):
 
     def read(self, request, year_year=None, playa_event_id=None):
         log.debug('PlayaEventHandler GET')
-        return super(PlayaEventHandler, self).read(request, year_year=year_year, playa_event_id=playa_event_id)
+        return super(PlayaEventHandler, self).read(request,
+                                                   year_year=year_year,
+                                                   playa_event_id=playa_event_id,
+                                                   online_only=False)
 
     def delete(self, request, year_year=None, playa_event_id=None):
         log.debug('PlayaEventHandler DELETE: %s %s', year_year, playa_event_id)
@@ -362,9 +394,11 @@ class PlayaEventHandler(BasePlayaEventHandler, BaseHandler):
         return self._create_or_update(request, year_year=year_year, playa_event_id=playa_event_id)
 
 
-class BaseThemeCampHandler(object):
+class AnonymousThemeCampHandler(AnonymousBaseHandler):
     model = ThemeCamp
     fields = camp_fields
+
+    allow_methods = ('GET',)
 
     def read(self, request, year_year=None, camp_id=None):
         if(year_year):
@@ -381,15 +415,11 @@ class BaseThemeCampHandler(object):
         else:
             return ThemeCamp.objects.get_and_cache(list_online=True)
 
-class AnonymousThemeCampHandler(BaseThemeCampHandler, AnonymousBaseHandler):
-    allow_methods = ('GET',)
 
-    def read(self, request, year_year=None, camp_id=None):
-        log.debug('AnonymousThemeCampHandler GET')
-        return super(AnonymousThemeCampHandler, self).read(request, year_year=year_year, camp_id=camp_id)
+class ThemeCampHandler(BaseHandler):
+    model = ThemeCamp
+    fields = camp_full_fields
 
-
-class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
     allow_methods = ('GET', 'DELETE', 'PUT', 'POST')
     anonymous = AnonymousThemeCampHandler
 
@@ -476,16 +506,16 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
             key = data['time_street']
             try:
                 street = TimeStreet.objects.get(pk=key)
-                obj.time_street = street
+                obj.time_address = street.name
             except TimeStreet.DoesNotExist:
-                return rc_response(request, rc.NOT_HERE, 'No such TimeStreet: %s' % key)
+                obj.time_address = data['time_address']
         elif 'time_street_name' in data:
             key = data['time_street_name']
             try:
                 street = TimeStreet.objects.get(name=key, year=obj.year)
-                obj.time_street = street
+                obj.time_address = street.name
             except TimeStreet.DoesNotExist:
-                return rc_response(request, rc.NOT_HERE, 'No such TimeStreet: %s' % key)
+                obj.time_address = data['time_street_name']
 
         # text fields
         for key in ('name','description', 'url', 'hometown', 'location_string', 'slug'):
@@ -514,8 +544,19 @@ class ThemeCampHandler(BaseThemeCampHandler, BaseHandler):
         return response
 
     def read(self, request, year_year=None, camp_id=None):
-        log.debug('AnonymousThemeCampHandler GET')
-        return super(ThemeCampHandler, self).read(request, year_year=year_year, camp_id=camp_id)
+        if(year_year):
+            try:
+                year = Year.objects.get(year=year_year)
+            except Year.DoesNotExist:
+                return rc_response(request, rc.NOT_HERE, 'Year not found #%s' % year_year)
+
+            if(camp_id):
+                camp = ThemeCamp.all_objects.filter(year=year,id=camp_id)
+            else:
+                camp = ThemeCamp.all_objects.get_and_cache(year=year)
+            return camp
+        else:
+            return ThemeCamp.all_objects.get_and_cache()
 
     def delete(self, request, year_year=None, camp_id=None):
         log.debug('ThemeCampHandler DELETE: %s %s', year_year, camp_id)

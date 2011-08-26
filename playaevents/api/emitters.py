@@ -221,7 +221,7 @@ class TimeAwareJSONEmitter(JSONEmitter):
             Lists.
             """
 
-            key = cache_key('json', data)
+            key = cache_key('jsonx', data)
             try:
                 ret = cache_get(key)
                 log.debug('got json serialized list from cache for %s', key)
