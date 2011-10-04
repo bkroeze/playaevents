@@ -545,7 +545,7 @@ def create_or_edit_event(request,
         instance = get_object_or_404(PlayaEvent, id=playa_event_id)
 
     if request.method=='POST':
-        form=playaforms.PlayaEventForm(data=request.POST, instance=instance)
+        form=playaforms.PlayaEventForm(data=request.POST, instance=instance, year_object=year)
         if form.is_valid():
             event = form.save(year_year, user, playa_event_id)
             next = '/' + event.year.year + "/playa_event/" + str(event.id)
@@ -567,7 +567,7 @@ def create_or_edit_event(request,
             playa_day_dt = event_date_list[playa_day-1]
             initial['day'] = datetime.combine(playa_day_dt, time(9))
 
-        form=playaforms.PlayaEventForm(initial=initial, instance=instance)
+        form=playaforms.PlayaEventForm(initial=initial, instance=instance, year_object=year)
 
     data = {
         "form": form,

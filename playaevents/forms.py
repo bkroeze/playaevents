@@ -1,5 +1,6 @@
 import logging
 from django import forms
+from django.conf import settings
 from django.forms import widgets
 from django.template.defaultfilters import slugify
 from playaevents.models import Year, PlayaEvent, ArtInstallation, ThemeCamp
@@ -212,6 +213,7 @@ class PlayaEventForm(forms.ModelForm):
         help_text='On the PlayaInfo Directory, you or other people involved with the event will be able to use this hint to remember your password.')
 
     def __init__(self, *args, **kwargs):
+        self.year_object = kwargs.pop('year_object')
         super(PlayaEventForm, self).__init__(*args, **kwargs)
 
         # if this is an edit, load the occurrences associated with this event
@@ -232,9 +234,13 @@ class PlayaEventForm(forms.ModelForm):
         elif 'initial' in kwargs and 'day' in kwargs['initial']:
             self.initial.setdefault('start_time', kwargs['initial']['day'])
             self.initial.setdefault('end_time', kwargs['initial']['day'])
-
+        self.registration_open = settings.EVENT_REGISTRATION_OPEN >= self.year_object.year
 
     def clean(self):
+
+        if not self.registration_open:
+            raise forms.ValidationError('%i Event Registration is not open', self.year_object.year)
+
         start=self.cleaned_data['start_time']
         end = self.cleaned_data['end_time']
 

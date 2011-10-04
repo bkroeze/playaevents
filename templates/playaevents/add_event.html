@@ -12,6 +12,7 @@ Adding or editing events is closed for {{ year.year }}.   Did you want to add an
 <a href="/{{ year.year|last_year }}/playa_event/create">{{ year.year|last_year }}</a>?
 {% else %}
 <div id="narrow-page-wrap">
+{% if form.registration_open %}
 {% if form.instance.id %}
 	<h2>{% blocktrans with year.year as curryear %}Edit Your Playa Event for {{ curryear }}{% endblocktrans %}</h2>
 {% else %}
@@ -44,7 +45,11 @@ Adding or editing events is closed for {{ year.year }}.   Did you want to add an
 <input type="submit" value="{% trans "Submit" %}">
 <input type="button" value="{% trans "Cancel" %}" onclick="window.location='/'"/>
 <input type="hidden" name="next" value="{{next|default:""}}"/>
-</form></div>
+</form>
+{% else %}
+<h2>{% blocktrans with year.year as curryear %}Sorry, event registration is not yet open for {{ curryear }}{% endblocktrans %}</h2>
+{% endif %}
+</div>
 {% endif %}
 {% endblock %}
 

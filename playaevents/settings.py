@@ -106,6 +106,9 @@ DEBUG_TOOLBAR_CONFIG = { 'INTERCEPT_REDIRECTS': False }
 
 LOGGED_IN_ONLY = False
 
+# to override, change in settings_local, this will open the event form for that year
+EVENT_REGISTRATION_OPEN = 2011
+
 from settings_local import *
 
 log.debug('running with DB %s', DATABASE_ENGINE)
