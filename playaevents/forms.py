@@ -11,6 +11,8 @@ from swingtime.models import Occurrence, EventType
 from swingtime import utils
 from datetime import datetime, date, time
 from django.shortcuts import get_object_or_404
+log = logging.getLogger('forms')
+
 
 MINUTES_INTERVAL = swingtime_settings.TIMESLOT_INTERVAL.seconds // 60
 SECONDS_INTERVAL = utils.time_delta_total_seconds(swingtime_settings.DEFAULT_OCCURRENCE_DURATION)
@@ -160,7 +162,7 @@ class PlayaEventForm(forms.ModelForm):
     hosted_by_camp = PlayaModelChoiceField(
         required=False,
         label='Hosted By Camp',
-        queryset=ThemeCamp.objects.filter(year=year).extra(
+        queryset=ThemeCamp.objects.filter(year=year).exclude(list_online=False).extra(
             select={'lower_name': 'lower(name)'}).order_by('lower_name'))
 
     located_at_art = PlayaModelChoiceField(
@@ -234,7 +236,7 @@ class PlayaEventForm(forms.ModelForm):
         elif 'initial' in kwargs and 'day' in kwargs['initial']:
             self.initial.setdefault('start_time', kwargs['initial']['day'])
             self.initial.setdefault('end_time', kwargs['initial']['day'])
-        self.registration_open = settings.EVENT_REGISTRATION_OPEN >= self.year_object.year
+        self.registration_open = int(settings.EVENT_REGISTRATION_OPEN) >= int(self.year_object.year)
 
     def clean(self):
 
