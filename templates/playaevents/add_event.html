@@ -16,6 +16,9 @@ Adding or editing events is closed for {{ year.year }}.   Did you want to add an
 {% if form.instance.id %}
 	<h2>{% blocktrans with year.year as curryear %}Edit Your Playa Event for {{ curryear }}{% endblocktrans %}</h2>
 {% else %}
+    {% if form.print_guide_closed %}
+    <h3>The submission limit has been reached for the print edition of the WWW Guide, however you can still submit your events for Playa Info.</h3>
+    {% endif %}
 	<h2>{% blocktrans with year.year as curryear %}Create Your Playa Event for {{ curryear }}{% endblocktrans %}</h2>
 {% endif %}
 {% if form.non_field_errors %}<ul class="errorList">{{ form.non_field_errors.as_ul }}</ul>{% endif %}

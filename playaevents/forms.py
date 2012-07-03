@@ -162,7 +162,7 @@ class PlayaEventForm(forms.ModelForm):
     hosted_by_camp = PlayaModelChoiceField(
         required=False,
         label='Hosted By Camp',
-        queryset=ThemeCamp.objects.filter(year=year).exclude(list_online=False).extra(
+        queryset=ThemeCamp.objects.filter(year=year).extra(
             select={'lower_name': 'lower(name)'}).order_by('lower_name'))
 
     located_at_art = PlayaModelChoiceField(
@@ -217,6 +217,8 @@ class PlayaEventForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.year_object = kwargs.pop('year_object')
         super(PlayaEventForm, self).__init__(*args, **kwargs)
+
+        self.print_guide_closed = PlayaEvent.objects.filter(year=self.year_object, moderation='A').count() >= 1500
 
         # if this is an edit, load the occurrences associated with this event
         if kwargs.get('instance'):
